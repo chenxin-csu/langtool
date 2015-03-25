@@ -60,7 +60,7 @@ html, body {
 
 p.help_flip {
 	color: white;
-	background: #B0DEDB;
+	background: rgb(142, 208, 204);
 }
 
 div.help_panel, p.help_flip {
@@ -101,8 +101,9 @@ div.container {
 				});
 				$(".help_flip").hover(function() {
 					$(this).css("background-color", "#71C5BF");
+					$(this).css("cursor","pointer");
 				}, function() {
-					$(this).css("background-color", "#B0DEDB");
+					$(this).css("background-color", "rgb(142, 208, 204)");
 				});
 			});
 		</script>
