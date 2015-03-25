@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ConfigManagerInfo appName="miracle_dev" refresh="true">
-    <remoteServer port="8081" domain="config.happyelements.net" />
-</ConfigManagerInfo>
