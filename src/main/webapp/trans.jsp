@@ -46,7 +46,7 @@ html, body {
 	background-repeat: no-repeat; ! important;
 	background-position: bottom right;
 	/*background-color: #F6F6F6;*/
-	height:100%;
+	height: 100%;
 	margin: 0px;
 	padding: 0px;
 }
@@ -86,9 +86,8 @@ div.help {
 }
 
 div.container {
-	padding-top: 60px;
+	padding-top: 40px;
 }
-
 </style>
 
 </head>
@@ -100,15 +99,24 @@ div.container {
 				$(".help_flip").click(function() {
 					$(".help_panel").slideToggle("slow");
 				});
+				$(".help_flip").hover(function() {
+					$(this).css("background-color", "#71C5BF");
+				}, function() {
+					$(this).css("background-color", "#B0DEDB");
+				});
 			});
 		</script>
 		<p class="help_flip">
-				<b>翻译小帮手 v2.0（Click for help）</b>
-			</p>
+			<b>翻译小帮手 v2.0（Click for help）</b>
+		</p>
 		<div class="help_panel">
-			<p>1、词库文件格式：支持<b>Excel2007(.xlsx)</b>及更新版本格式。单数列为词源，偶数列为相应词源的翻译,支持多列词源。</p>
-			<p>2、翻译文件格式：<b>Excel2007(.xlsx)</b>和<b>Word2007(.docx)</b>及更新版本格式以及<b>文本文档(.txt，.xml，.yml等)</b>。使用Excel时，需手动添加第一行，用"lang"标记需要翻译的列。例如，A列内容需要翻译到C列，则在A列列头写「lang:C」，
-				如果只写「lang」则默认翻译到下一列。Word文件将进行全文搜索和替换，并保留原格式及图片，暂不支持表格。</p>
+			<p>
+				1、词库文件格式：支持<b>Excel2007(xlsx)</b>及更新版本格式。单数列为词源，偶数列为相应词源的翻译,支持多列词源。
+			</p>
+			<p>
+				2、翻译文件格式：<b>Excel2007(xlsx)</b>和<b>Word2007(docx)</b>及更新版本格式以及<b>文本文档(txt/xml/yml等)</b>。使用Excel时，需手动添加第一行，用"lang"标记需要翻译的列。例如，A列内容需要翻译到C列，则在A列列头写「lang:C」，
+				如果只写「lang」则默认翻译到下一列。Word文件将进行全文搜索和替换，并保留原格式及图片，暂不支持表格。
+			</p>
 			<p>3、开始工作吧~！史迪奇在看着你呐！！</p>
 		</div>
 	</div>
@@ -128,16 +136,14 @@ div.container {
 				<div class="col-lg-7">
 					<!-- The fileinput-button span is used to style the file input field as button -->
 					<span class="btn btn-success fileinput-button"> <i
-						class="glyphicon glyphicon-plus"></i> <span>Add files...</span> <input
+						class="glyphicon glyphicon-plus"></i> <span>添加文件</span> <input
 						type="file" name="files[]" multiple style="height: 32px">
 					</span>
 					<button type="submit" class="btn btn-primary start">
-						<i class="glyphicon glyphicon-upload"></i> <span>Start
-							upload</span>
+						<i class="glyphicon glyphicon-upload"></i> <span>上传文件</span>
 					</button>
 					<button type="reset" class="btn btn-danger cancel">
-						<i class="glyphicon glyphicon-ban-circle"></i> <span>Cancel
-							upload</span>
+						<i class="glyphicon glyphicon-ban-circle"></i> <span>取消文件</span>
 					</button>
 					<span class="fileupload-process"></span>
 				</div>
@@ -165,16 +171,14 @@ div.container {
 				<div class="col-lg-7">
 					<!-- The fileinput-button span is used to style the file input field as button -->
 					<span class="btn btn-success fileinput-button"> <i
-						class="glyphicon glyphicon-plus"></i> <span>Add files...</span> <input
+						class="glyphicon glyphicon-plus"></i> <span>添加文件</span> <input
 						type="file" name="files[]" multiple style="height: 32px">
 					</span>
 					<button type="submit" class="btn btn-primary start">
-						<i class="glyphicon glyphicon-upload"></i> <span>Start
-							upload</span>
+						<i class="glyphicon glyphicon-upload"></i> <span>开始翻译</span>
 					</button>
 					<button type="reset" class="btn btn-danger cancel">
-						<i class="glyphicon glyphicon-ban-circle"></i> <span>Cancel
-							upload</span>
+						<i class="glyphicon glyphicon-ban-circle"></i> <span>取消文件</span>
 					</button>
 					<span class="fileupload-process"></span>
 				</div>
@@ -219,13 +223,13 @@ div.container {
             {% if (!i && !o.options.autoUpload) { %}
                 <button class="btn btn-primary start" disabled style='display:none'>
                     <i class="glyphicon glyphicon-upload"></i>
-                    <span>Start</span>
+                    <span>上传</span>
                 </button>
             {% } %}
             {% if (!i) { %}
                 <button class="btn btn-danger cancel" style='display:none'>
                     <i class="glyphicon glyphicon-ban-circle"></i>
-                    <span>Cancel</span>
+                    <span>取消</span>
                 </button>
             {% } %}
         </td>
@@ -255,9 +259,9 @@ div.container {
                 <div><span class="label label-danger">Error</span> {%=file.error%}</div>
             {% }else{ %}
 				{% if (file.deleteUrl) { %}
-					<div><span class="label label-success">Success</span>上传成功</div>
+					<div><span class="label label-success">上传成功</span></div>
 				{% }else{ %}
-					<div><span class="label label-success">Success</span> 翻译成功，点击<span class="label label-success">Download</span>下载</div>
+					<div><span class="label label-success">翻译成功</span> 点击<span class="label label-success">下载文件</span>保存到本地</div>
 				{% } %}
 			{%}%}
         </td>
@@ -268,7 +272,7 @@ div.container {
             {% if (file.deleteUrl) { %}
                 <button class="btn btn-warning delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
                     <i class="glyphicon glyphicon-trash"></i>
-                    <span>Delete</span>
+                    <span>删除</span>
                 </button>
              <!--   <input type="checkbox" name="delete" value="1" class="toggle">-->
             {% } else { %}
@@ -276,12 +280,12 @@ div.container {
 				<a class="download_btn" href="{%=file.url%}" download="{%=file.name%}">
 				<span class="btn btn-success download">
 					<i class="glyphicon glyphicon-download"></i>
-                    Download
+                    下载文件
                 </span></a>
 				{% } %}
                 <button class="btn btn-danger cancel">
                     <i class="glyphicon glyphicon-ban-circle"></i>
-                    <span>Cancel</span>
+                    <span>取消</span>
                 </button>
             {% } %}
         </td>

@@ -42,7 +42,7 @@
 }
 
 html, body {
-	background-image: url('./img/bg.png');
+	background-image: url('./img/pkq.png');
 	background-repeat: no-repeat; ! important;
 	background-position: bottom right;
 	/*background-color: #F6F6F6;*/
@@ -62,6 +62,7 @@ p.help_flip {
 	color: white;
 	background: #B0DEDB;
 }
+
 
 div.help_panel, p.help_flip {
 	margin: 0px;
@@ -86,26 +87,51 @@ div.help {
 }
 
 div.container {
-	padding-top: 60px;
+	padding-top: 40px;
 }
 </style>
-
+<script type="text/javascript">
+	function unlock_excel_col_options() {
+		var check = $("#check_stats_col").is(":checked");
+		if (check) {
+			$("#stats_col").attr("disabled", false);
+			$("#stats_col").attr("style",
+					"background-color: write;color: black");
+		} else {
+			$("#stats_col").attr("disabled", true);
+			if ($("#stats_col").val() == '') {
+				$("#stats_col").val("F|G");
+			}
+			$("#stats_col").attr("style",
+					"background-color: rgb(219, 218, 218);color: gray");
+		}
+	}
+</script>
 </head>
 <body>
-	<div class="help">
+	<div class="help" >
 		<script src="js/jquery.min.js"></script>
 		<script>
 			$(document).ready(function() {
 				$(".help_flip").click(function() {
 					$(".help_panel").slideToggle("slow");
 				});
+				$(".help_flip").hover(function(){
+					$(this).css("background-color","#71C5BF");
+				},function(){
+					$(this).css("background-color","#B0DEDB");
+				});
+				
 			});
 		</script>
 		<p class="help_flip">
 			<b>统计小帮手 v1.0（Click for help）</b>
 		</p>
 		<div class="help_panel">
-			<p>3、开始工作吧~！史迪奇在看着你呐！！</p>
+			<p>1、支持<b>Excel2007(xlsx)</b>、<b>Word2007(docx)</b>、<b>文本文档(txt/xml/yml等)</b>格式文件字符统计。</p>
+			<p>2、Excel文件支持在表头指定lang列或开启“高级设置”配置指定列（用|分隔，如F|G两列）进行单独翻译统计，如果不开启“高级选项”指定列并且不添加表头指定lang列，则默认统计所有列。</p>
+			<p>3、支持选择多种字符集，中文（简、繁）和日文字符相互包含，无法区分，需要注意。</p>
+			<p>4、辛苦啦！累了记得休息一下哟~</p>
 		</div>
 	</div>
 
@@ -114,21 +140,18 @@ div.container {
 		<form id="fileupload_stats" method="POST"
 			enctype="multipart/form-data">
 			<!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-			<input type="hidden" name="p1" value="v1">
 			<div class="row fileupload-buttonbar">
 				<div class="col-lg-7">
 					<!-- The fileinput-button span is used to style the file input field as button -->
 					<span class="btn btn-success fileinput-button"> <i
-						class="glyphicon glyphicon-plus"></i> <span>Add files...</span> <input
-						type="file" name="files[]" multiple style="height: 32px">
+						class="glyphicon glyphicon-plus"></i> <span>添加文件</span> <input
+						type="file" name="files[]" multiple style="height: 28px">
 					</span>
 					<button type="submit" class="btn btn-primary start">
-						<i class="glyphicon glyphicon-upload"></i> <span>Start
-							upload</span>
+						<i class="glyphicon glyphicon-upload"></i> <span>开始统计</span>
 					</button>
 					<button type="reset" class="btn btn-danger cancel">
-						<i class="glyphicon glyphicon-ban-circle"></i> <span>Cancel
-							upload</span>
+						<i class="glyphicon glyphicon-ban-circle"></i> <span>取消文件</span>
 					</button>
 					<span class="fileupload-process"></span>
 				</div>
@@ -143,6 +166,26 @@ div.container {
 					<div class="progress-extended">&nbsp;</div>
 				</div>
 			</div>
+			<div>
+				<p>
+					<font
+						style="font-weight: bold; color: rgb(107, 150, 210); font-size: 16px;">高级选项</font>
+				</p>
+				<p>
+					统计字符：<input type="checkbox" name="check_lang_cjk" checked="checked">中日&nbsp;&nbsp;<input
+						type="checkbox" name="check_lang_en">英文&nbsp;&nbsp;<input
+						type="checkbox" name="check_lang_num">数字
+				</p>
+				<p>
+					是否开启：<input type="checkbox" id="check_stats_col"
+						name="check_stats_col" onchange="unlock_excel_col_options()">
+					所有Excel文件只统计列：<input type="text" id="stats_col" name="stats_col"
+						style="background-color: rgb(219, 218, 218); color: gray"
+						value="F|G" onclick="javascript:$('#stats_col').val('')"
+						disabled="disabled"><font style="color: red">（开启此选项时，若同时存在表头lang，也会统计lang指定列）</font>
+				</p>
+			</div>
+			<br>
 			<!-- The table listing the files available for upload/download -->
 			<table role="presentation" class="table table-striped">
 				<tbody class="files"></tbody>
@@ -210,9 +253,9 @@ div.container {
                 <div><span class="label label-danger">Error</span> {%=file.error%}</div>
             {% }else{ %}
 				{% if (file.deleteUrl) { %}
-					<div><span class="label label-success">Success</span>上传成功</div>
+					<div><span class="label label-success">上传成功</span></div>
 				{% }else{ %}
-					<div><span class="label label-success">Success</span> 
+					<div><span class="label label-success">统计完成</span> 
 						<br>文件字数：{%=file.stats.totalCnt%}<br>
 						{% if(file.stats.fileType == 1) { %}
 						{% for(var sub in file.stats.colDetail) { %}

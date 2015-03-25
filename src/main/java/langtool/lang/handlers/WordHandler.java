@@ -7,16 +7,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.lang.Character.UnicodeBlock;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import langtool.CharacterUnifiyEnum;
 import langtool.LangTool;
 import langtool.StatsInfo;
+import langtool.lang.FileTypeConst;
 import langtool.lang.ILangFileHandler;
 import langtool.util.FileUtil;
 import langtool.util.StringUtil;
@@ -109,18 +109,40 @@ public class WordHandler implements ILangFileHandler {
 		String doneText = new String(rawStr);
 		for (String word : wordsIdx) {
 			System.out.println(doneText);
-			doneText = doneText.replaceAll(LangTool.quote(word), LangTool.quote(words.get(word)));
+			doneText = doneText.replaceAll(LangTool.quote(word),
+					LangTool.quote(words.get(word)));
 			System.out.println(doneText);
 		}
 		return doneText;
 	}
 
 	@Override
-	public StatsInfo stats(File file, Set<UnicodeBlock> langSet)
+	public StatsInfo stats(File file, Map<String, String> params)
 			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		FileInputStream fis = new FileInputStream(file);
+		XWPFDocument xwpfDoc = new XWPFDocument(fis);
+		Iterator<XWPFParagraph> iterator = xwpfDoc.getParagraphsIterator();
+		XWPFParagraph para;
+		long totalWords = 0l;
+		while (iterator.hasNext()) {
+			para = iterator.next();
+			List<XWPFRun> runs = para.getRuns();
+			for (int i = 0; i < runs.size(); i++) {
+				XWPFRun run = runs.get(i);
+				String runText = run.toString();
+				if (StringUtil.isEmpty(runText)) {
+					continue;
+				}
+				totalWords += CharacterUnifiyEnum.statsCharacterCnt(params,
+						runText);
+			}
+		}
+		fis.close();
+		StatsInfo info = new StatsInfo();
+		info.setTotalWords(totalWords);
+		info.setFileName(file.getName());
+		info.setFileType(FileTypeConst.FILE_TYPE_WORD);
+		return info;
 	}
-
 
 }

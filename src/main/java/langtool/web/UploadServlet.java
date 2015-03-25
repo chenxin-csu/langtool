@@ -11,10 +11,8 @@ import static langtool.LangConst.WORKSPACE_PATH;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import langtool.CharacterUnifiyEnum;
 import langtool.LangConst;
 import langtool.LangTool;
 import langtool.StatsInfo;
@@ -67,7 +64,6 @@ public class UploadServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	@SuppressWarnings("serial")
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(true);
@@ -171,14 +167,8 @@ public class UploadServlet extends HttpServlet {
 						}
 					} else if ("stats".equals(type)) {
 						System.out.println("stats:" + file.getName());
-						HashSet<UnicodeBlock> set = new HashSet<UnicodeBlock>() {
-							{
-								addAll(CharacterUnifiyEnum.JP_CN
-										.getCharacterUbs());
-							}
-						};
 						TwoTuple<StatsInfo, JSONObject> tuple = LangTool
-								.statsFile(file, set, session);
+								.statsFile(file, params);
 						if (statsList == null) {
 							statsList = new ArrayList<StatsInfo>();
 						}

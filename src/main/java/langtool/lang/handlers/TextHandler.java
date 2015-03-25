@@ -7,13 +7,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.lang.Character.UnicodeBlock;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import langtool.CharacterUnifiyEnum;
 import langtool.LangTool;
 import langtool.StatsInfo;
+import langtool.lang.FileTypeConst;
 import langtool.lang.ILangFileHandler;
 import langtool.util.FileUtil;
 
@@ -56,10 +56,21 @@ public class TextHandler implements ILangFileHandler {
 	}
 
 	@Override
-	public StatsInfo stats(File file, Set<UnicodeBlock> langSet)
+	public StatsInfo stats(File file, Map<String,String> params)
 			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
+		String line = null;
+		long totalWords = 0l;
+		while ((line = br.readLine()) != null) {
+			totalWords += CharacterUnifiyEnum.statsCharacterCnt(params, line);
+		}
+		br.close();
+		StatsInfo info = new StatsInfo();
+		info.setFileName(file.getName());
+		info.setTotalWords(totalWords);
+		info.setFileType(FileTypeConst.FILE_TYPE_TEXT);
+		return info;
 	}
 
 }

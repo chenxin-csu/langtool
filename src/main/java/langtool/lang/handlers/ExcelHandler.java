@@ -6,7 +6,6 @@ import static langtool.LangConst.TMP_PATH;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.Character.UnicodeBlock;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import langtool.CharacterUnifiyEnum;
 import langtool.LangTool;
@@ -21,6 +21,7 @@ import langtool.StatsInfo;
 import langtool.lang.FileTypeConst;
 import langtool.lang.ILangFileHandler;
 import langtool.util.FileUtil;
+import langtool.util.StatsUtil;
 import langtool.util.StringUtil;
 
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -68,7 +69,8 @@ public class ExcelHandler implements ILangFileHandler {
 				if (c != null && !"".equals(c.trim()) && c.contains("lang")) {
 					String[] tmp = c.split(":");
 					if (tmp.length > 1) {
-						flags.put(i, columnToIndex(tmp[1].trim().toUpperCase()));
+						flags.put(i, StatsUtil.columnToIndex(tmp[1].trim()
+								.toUpperCase()));
 					} else {
 						flags.put(i, i + 1);
 					}
@@ -126,65 +128,17 @@ public class ExcelHandler implements ILangFileHandler {
 
 	}
 
-	/**
-	 * 用于将Excel表格中列号字母转成列索引，从1对应A开始
-	 * 
-	 * @param column
-	 *            列号
-	 * @return 列索引
-	 */
-	private static int columnToIndex(String column) {
-		if (!column.matches("[A-Z]+")) {
-			try {
-				throw new Exception("Invalid parameter");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		int index = 0;
-		char[] chars = column.toUpperCase().toCharArray();
-		for (int i = 0; i < chars.length; i++) {
-			index += ((int) chars[i] - (int) 'A' + 1)
-					* (int) Math.pow(26, chars.length - i - 1);
-		}
-		return index - 1;
-	}
-
-	/**
-	 * 用于将excel表格中列索引转成列号字母，从A对应1开始
-	 * 
-	 * @param index
-	 *            列索引
-	 * @return 列号
-	 */
-	private static String indexToColumn(int index) {
-		if (index <= 0) {
-			try {
-				throw new Exception("Invalid parameter");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		String column = "";
-		do {
-			index--;
-			column = ((char) (index % 26 + (int) 'A')) + column;
-			index = (int) ((index - index % 26) / 26);
-		} while (index > 0);
-		return column;
-	}
-
 	public static void main(String[] args) {
 		String c = "ABC";
 		System.out.println(c);
-		int idx = columnToIndex(c.toUpperCase());
+		int idx = StatsUtil.columnToIndex(c.toUpperCase());
 		System.out.println(idx + 1);
-		System.out.println(indexToColumn(idx + 1));
+		System.out.println(StatsUtil.indexToColumn(idx + 1));
 
 	}
 
 	@Override
-	public StatsInfo stats(File file, Set<UnicodeBlock> langSet)
+	public StatsInfo stats(File file, Map<String, String> params)
 			throws Exception {
 		XSSFWorkbook wb = null;
 		long wordCnt = 0l;
@@ -194,7 +148,7 @@ public class ExcelHandler implements ILangFileHandler {
 			int sheetCnt = wb.getNumberOfSheets();
 			for (int sheetIdx = 0; sheetIdx < sheetCnt; sheetIdx++) {
 				XSSFSheet sheet = wb.getSheetAt(sheetIdx);
-				Map<String, Long> sheetStatsMap = new HashMap<String, Long>();
+				Map<String, Long> sheetStatsMap = new TreeMap<String, Long>();
 				detailMap.put(sheet.getSheetName(), sheetStatsMap);
 
 				// flag
@@ -212,12 +166,9 @@ public class ExcelHandler implements ILangFileHandler {
 						flags.add(i);
 					}
 				}
-				//
-
 				XSSFRow row = null;
 				int rowStart = flags.size() > 0 ? 1 : 0;
-				flags.add(5);// TODO
-				flags.add(6);
+				flags.addAll(StatsUtil.getExcelLangColIndexFromParams(params));
 				for (int i = rowStart; i <= sheet.getLastRowNum(); i++) {
 					row = sheet.getRow(i);
 					if (row == null) {
@@ -238,9 +189,9 @@ public class ExcelHandler implements ILangFileHandler {
 							continue;
 						}
 						long lineWordsCnt = CharacterUnifiyEnum
-								.statsCharacterCnt(langSet, line);
+								.statsCharacterCnt(params, line);
 						wordCnt += lineWordsCnt;
-						String charColName = indexToColumn(j+1);
+						String charColName = StatsUtil.indexToColumn(j + 1);
 						Long colWordCnt = sheetStatsMap.get(charColName);
 						if (colWordCnt == null) {
 							colWordCnt = 0l;

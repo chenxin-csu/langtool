@@ -3,7 +3,6 @@ package langtool;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.Character.UnicodeBlock;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -285,7 +283,7 @@ public class LangTool {
 
 	// 统计文件信息
 	public static TwoTuple<StatsInfo, JSONObject> statsFile(File file,
-			Set<UnicodeBlock> langSet, HttpSession session) throws Exception {
+			Map<String, String> params) throws Exception {
 		if (!file.isFile()) {
 			return null;
 		}
@@ -295,10 +293,10 @@ public class LangTool {
 		if (langHandler == null) {
 			return null;
 		}
-		StatsInfo info = langHandler.stats(file, langSet);
+		StatsInfo info = langHandler.stats(file, params);
 		JSONObject statsJson = new JSONObject();
 		statsJson.put("totalCnt", info.getTotalWords());
-		statsJson.put("fileType",info.getFileType());
+		statsJson.put("fileType", info.getFileType());
 		if (info.getFileType() == FileTypeConst.FILE_TYPE_EXCEL) {
 			JSONArray details = new JSONArray();
 			for (Entry<String, Map<String, Long>> entry : info
@@ -319,5 +317,4 @@ public class LangTool {
 		}
 		return TupleUtil.tuple(info, statsJson);
 	}
-
 }

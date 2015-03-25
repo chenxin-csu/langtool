@@ -1,10 +1,8 @@
 package langtool.lang;
 
 import java.io.File;
-import java.lang.Character.UnicodeBlock;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import langtool.StatsInfo;
 
@@ -29,5 +27,5 @@ public interface ILangFileHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	StatsInfo stats(File file, Set<UnicodeBlock> langSet) throws Exception;
+	StatsInfo stats(File file, Map<String, String> params) throws Exception;
 }
