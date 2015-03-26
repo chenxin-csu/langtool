@@ -148,11 +148,13 @@ public class ExcelHandler implements ILangFileHandler {
 			int sheetCnt = wb.getNumberOfSheets();
 			for (int sheetIdx = 0; sheetIdx < sheetCnt; sheetIdx++) {
 				XSSFSheet sheet = wb.getSheetAt(sheetIdx);
-				Map<String, Long> sheetStatsMap = new TreeMap<String, Long>();
-				detailMap.put(sheet.getSheetName(), sheetStatsMap);
-
 				// flag
 				XSSFRow flagRow = sheet.getRow(0);
+				if (flagRow == null) {
+					continue;
+				}
+				Map<String, Long> sheetStatsMap = new TreeMap<String, Long>();
+				detailMap.put(sheet.getSheetName(), sheetStatsMap);
 				Set<Integer> flags = new HashSet<Integer>();
 				int firstRowCellNum = flagRow.getLastCellNum();
 
