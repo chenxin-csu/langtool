@@ -1,34 +1,22 @@
 package langtool.util;
 
-import static langtool.LangConst.FILES_PATH;
-import static langtool.LangConst.PATH_SPLITER;
-import static langtool.LangConst.THREAD_LOCAL_KEY_WS;
-import static langtool.LangConst.TMP_PATH;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import langtool.LangConst;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
 
-import langtool.LangConst;
+import static langtool.LangConst.*;
 
 public class FileUtil {
-	public static void outputFile(HttpServletResponse resp, File file)
-			throws UnsupportedEncodingException, FileNotFoundException,
-			IOException {
+	public static void outputFile(HttpServletResponse resp, File file) throws UnsupportedEncodingException, FileNotFoundException, IOException {
 		String contentType = "application/x-msdownload";
 		String enc = "utf-8";
 		String filename = URLEncoder.encode(file.getName(), enc);
 		resp.reset();
 		resp.setContentType(contentType);
-		resp.addHeader("Content-Disposition", "attachment; filename=\""
-				+ filename + "\"");
+		resp.addHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 		int fileLength = (int) file.length();
 		resp.setContentLength(fileLength);
 		/* 如果文件长度大于0 */
@@ -51,8 +39,7 @@ public class FileUtil {
 	public static void clearDir(File file) {
 		// for safety clear
 		if (!file.getAbsolutePath().contains(LangConst.WORKSPACE_PATH)) {
-			System.out.println("stop clear invalid dir:"
-					+ file.getAbsolutePath());
+			System.out.println("stop clear invalid dir:" + file.getAbsolutePath());
 			return;
 		}
 		if (!file.exists()) {
@@ -74,10 +61,8 @@ public class FileUtil {
 	}
 
 	public static File checkDoneDir() {
-		String wsPath = LangToolRuntimeContext.getContext().get(
-				THREAD_LOCAL_KEY_WS);
-		File subDir = new File(wsPath + PATH_SPLITER + FILES_PATH
-				+ PATH_SPLITER + TMP_PATH + PATH_SPLITER);
+		String wsPath = LangToolRuntimeContext.getContext().get(THREAD_LOCAL_KEY_WS);
+		File subDir = new File(wsPath + PATH_SPLITER + FILES_PATH + PATH_SPLITER + TMP_PATH + PATH_SPLITER);
 		if (!subDir.exists()) {
 			subDir.mkdirs();
 		}

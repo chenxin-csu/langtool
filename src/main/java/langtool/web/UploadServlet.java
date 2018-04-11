@@ -1,13 +1,24 @@
 package langtool.web;
 
-import static langtool.LangConst.FILES_PATH;
-import static langtool.LangConst.PATH_SPLITER;
-import static langtool.LangConst.STATS_PATH;
-import static langtool.LangConst.THREAD_LOCAL_KEY_WS;
-import static langtool.LangConst.TMP_PATH;
-import static langtool.LangConst.WORDS_PATH;
-import static langtool.LangConst.WORKSPACE_PATH;
+import langtool.LangConst;
+import langtool.LangTool;
+import langtool.StatsInfo;
+import langtool.TwoTuple;
+import langtool.util.FileUtil;
+import langtool.util.LangToolRuntimeContext;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,26 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import langtool.LangConst;
-import langtool.LangTool;
-import langtool.StatsInfo;
-import langtool.TwoTuple;
-import langtool.util.FileUtil;
-import langtool.util.LangToolRuntimeContext;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import static langtool.LangConst.*;
 
 /**
  * Servlet implementation class UploadServlet
@@ -55,8 +47,7 @@ public class UploadServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		return;
 	}
 
@@ -64,8 +55,7 @@ public class UploadServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(true);
 		PrintWriter writer = response.getWriter();
 		JSONObject ret = new JSONObject();
@@ -74,24 +64,21 @@ public class UploadServlet extends HttpServlet {
 		try {
 			String type = request.getParameter("type");
 			String savePath = getWorkspacePath(request);
-			LangToolRuntimeContext.getContext().set(THREAD_LOCAL_KEY_WS,
-					savePath);
+			LangToolRuntimeContext.getContext().set(THREAD_LOCAL_KEY_WS, savePath);
 			if ("clear".equals(type)) {
 				FileUtil.clearDir(new File(savePath));// 清理工作区
 				clearSession(session);// 清理词库
 				return;
 			}
 			if (!ServletFileUpload.isMultipartContent(request)) {
-				throw new IllegalArgumentException(
-						"Request is not multipart, please 'multipart/form-data' enctype for your form.");
+				throw new IllegalArgumentException("Request is not multipart, please 'multipart/form-data' enctype for your form.");
 			}
 			boolean hasError = false;
 			String msg = null;
 			if ("files".equals(type)) {
 				// check words uploaded
 				File wordsDir = new File(savePath + WORDS_PATH + PATH_SPLITER);
-				if (!wordsDir.exists() || !wordsDir.isDirectory()
-						|| wordsDir.listFiles().length <= 0) {
+				if (!wordsDir.exists() || !wordsDir.isDirectory() || wordsDir.listFiles().length <= 0) {
 					hasError = true;
 					msg = "请先上传词库文件";
 				}
@@ -102,8 +89,7 @@ public class UploadServlet extends HttpServlet {
 				savePath += STATS_PATH + PATH_SPLITER;
 			}
 
-			ServletFileUpload uploadHandler = new ServletFileUpload(
-					new DiskFileItemFactory());
+			ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
 			items = uploadHandler.parseRequest(request);
 			ret.put("files", jsonArray);
 			JSONObject detail = null;
@@ -133,8 +119,7 @@ public class UploadServlet extends HttpServlet {
 						detail.put("error", msg);
 						continue;
 					}
-					if (("words").equals(type)
-							&& !item.getName().endsWith(".xlsx")) {
+					if (("words").equals(type) && !item.getName().endsWith(".xlsx")) {
 						detail.put("error", "词库文件只支持.xlsx格式哟，可以点击页面上方查看帮助信息。");
 						continue;
 					}
@@ -146,8 +131,7 @@ public class UploadServlet extends HttpServlet {
 					item.write(file);
 					if ("words".equals(type)) {
 						detail.put("name", item.getName());
-						detail.put("deleteUrl",
-								"op?op=del&file=" + file.getName());
+						detail.put("deleteUrl", "op?op=del&file=" + file.getName());
 						detail.put("deleteType", "DELETE");
 					} else if ("files".equals(type)) {
 						System.out.println("trans:" + file.getName());
@@ -156,19 +140,12 @@ public class UploadServlet extends HttpServlet {
 							throw new Exception("未能成功生成翻译后文件");
 						} else {
 							detail.put("name", transFile.getName());
-							detail.put(
-									"url",
-									WORKSPACE_PATH + PATH_SPLITER
-											+ request.getSession(true).getId()
-											+ PATH_SPLITER + FILES_PATH
-											+ PATH_SPLITER + TMP_PATH
-											+ PATH_SPLITER
-											+ transFile.getName());
+							detail.put("url", WORKSPACE_PATH + PATH_SPLITER + request.getSession(true).getId() + PATH_SPLITER + FILES_PATH
+									+ PATH_SPLITER + TMP_PATH + PATH_SPLITER + transFile.getName());
 						}
 					} else if ("stats".equals(type)) {
 						System.out.println("stats:" + file.getName());
-						TwoTuple<StatsInfo, JSONObject> tuple = LangTool
-								.statsFile(file, params);
+						TwoTuple<StatsInfo, JSONObject> tuple = LangTool.statsFile(file, params);
 						if (statsList == null) {
 							statsList = new ArrayList<StatsInfo>();
 						}
@@ -227,9 +204,8 @@ public class UploadServlet extends HttpServlet {
 	}
 
 	private String getWorkspacePath(HttpServletRequest request) {
-		return request.getServletContext().getRealPath(PATH_SPLITER)
-				+ PATH_SPLITER + WORKSPACE_PATH + PATH_SPLITER
-				+ request.getSession(true).getId() + PATH_SPLITER;
+		return request.getServletContext().getRealPath(PATH_SPLITER) + PATH_SPLITER + WORKSPACE_PATH + PATH_SPLITER + request.getSession(true).getId()
+				+ PATH_SPLITER;
 	}
 
 }

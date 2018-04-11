@@ -1,22 +1,19 @@
 package langtool.web;
 
-import static langtool.LangConst.PATH_SPLITER;
-import static langtool.LangConst.WORDS_PATH;
-import static langtool.LangConst.WORKSPACE_PATH;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import static langtool.LangConst.*;
 
 /**
  * Servlet implementation class OpServlet
@@ -37,8 +34,7 @@ public class OpServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
 
@@ -46,18 +42,14 @@ public class OpServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String fileName = req.getParameter("file");
-		String filePath = req.getServletContext().getRealPath(PATH_SPLITER)
-				+ PATH_SPLITER + WORKSPACE_PATH + PATH_SPLITER
-				+ req.getSession(true).getId() + PATH_SPLITER + WORDS_PATH
-				+ PATH_SPLITER + fileName;
+		String filePath = req.getServletContext().getRealPath(PATH_SPLITER) + PATH_SPLITER + WORKSPACE_PATH + PATH_SPLITER
+				+ req.getSession(true).getId() + PATH_SPLITER + WORDS_PATH + PATH_SPLITER + fileName;
 		(new File(filePath)).delete();
 		JSONObject ret = new JSONObject();
 		JSONArray jsonArray = new JSONArray();

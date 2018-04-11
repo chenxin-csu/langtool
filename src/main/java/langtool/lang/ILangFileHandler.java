@@ -1,10 +1,10 @@
 package langtool.lang;
 
+import langtool.StatsInfo;
+
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-
-import langtool.StatsInfo;
 
 public interface ILangFileHandler {
 
@@ -13,12 +13,11 @@ public interface ILangFileHandler {
 	 * 
 	 * @param file
 	 * @param words
-	 * @param wordsIdx
+	 * @param wordsIndex
 	 * @return
 	 * @throws Exception
 	 */
-	File trans(File file, Map<String, String> words, List<String> wordsIndex)
-			throws Exception;
+	File trans(File file, Map<String, String> words, List<String> wordsIndex) throws Exception;
 
 	/**
 	 * 文件统计

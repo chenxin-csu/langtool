@@ -1,11 +1,11 @@
 package langtool;
 
+import langtool.util.StatsUtil;
+
 import java.lang.Character.UnicodeBlock;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import langtool.util.StatsUtil;
 
 @SuppressWarnings("serial")
 public enum CharacterUnifiyEnum {
@@ -14,13 +14,16 @@ public enum CharacterUnifiyEnum {
 		{
 			add(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS);
 		}
-	}), JP_CN("check_lang_cjk", new HashSet<Character.UnicodeBlock>() {
+	}),
+	JP_CN("check_lang_cjk", new HashSet<Character.UnicodeBlock>() {
 		{
 			add(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS);
 			add(Character.UnicodeBlock.HIRAGANA);
 			add(Character.UnicodeBlock.KATAKANA);
 		}
-	}), EN("check_lang_en", "[a-zA-Z]"), NUMBER("check_lang_num", "[0-9]"),
+	}),
+	EN("check_lang_en", "[a-zA-Z]"),
+	NUMBER("check_lang_num", "[0-9]"),
 
 	;
 	private String checkboxName;
@@ -28,8 +31,7 @@ public enum CharacterUnifiyEnum {
 	private boolean useReg;
 	private Set<Character.UnicodeBlock> ubs = new HashSet<UnicodeBlock>();
 
-	private CharacterUnifiyEnum(String checkboxName,
-			Set<Character.UnicodeBlock> set) {
+	private CharacterUnifiyEnum(String checkboxName, Set<Character.UnicodeBlock> set) {
 		this.checkboxName = checkboxName;
 		ubs.addAll(set);
 		this.useReg = false;
@@ -76,8 +78,7 @@ public enum CharacterUnifiyEnum {
 	public static long statsCharacterCnt(Map<String, String> params, String line) {
 		char[] chars = line.toCharArray();
 		long cnt = 0l;
-		TwoTuple<Set<UnicodeBlock>, Set<String>> matcher = StatsUtil
-				.getCharacterMatcherFromParams(params);
+		TwoTuple<Set<UnicodeBlock>, Set<String>> matcher = StatsUtil.getCharacterMatcherFromParams(params);
 		Set<UnicodeBlock> unifySet = matcher.first;
 		Set<String> regSet = matcher.second;
 		for (int i = 0; i < chars.length; i++) {

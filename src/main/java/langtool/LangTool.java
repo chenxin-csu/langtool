@@ -1,34 +1,28 @@
 package langtool;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.servlet.http.HttpSession;
-
 import langtool.lang.FileTypeConst;
 import langtool.lang.ILangFileHandler;
 import langtool.lang.LangFileFactory;
 import langtool.util.StringUtil;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LangTool {
 
@@ -56,16 +50,14 @@ public class LangTool {
 			}
 
 			if (!wordFile.exists() || !wordFile.isFile()) {
-				throw new Exception("目标：" + wordFile.getAbsolutePath()
-						+ "不是有效词库文件，检查一下吧~");
+				throw new Exception("目标：" + wordFile.getAbsolutePath() + "不是有效词库文件，检查一下吧~");
 			}
 			loadWords(wordFile, WORDS, WORDS_INDEX, false);
 		}
 
 	}
 
-	private static void loadWords(File file, Map<String, String> wordsMap,
-			List<String> wordsIndexList, boolean append) throws Exception {
+	private static void loadWords(File file, Map<String, String> wordsMap, List<String> wordsIndexList, boolean append) throws Exception {
 		if (!append) {
 			wordsMap.clear();
 			wordsIndexList.clear();
@@ -88,8 +80,7 @@ public class LangTool {
 				}
 				XSSFCell c1 = row.getCell(j++);
 				XSSFCell c2 = row.getCell(j++);
-				if (c1.getCellType() != XSSFCell.CELL_TYPE_STRING
-						|| c2.getCellType() != XSSFCell.CELL_TYPE_STRING) {
+				if (c1.getCellTypeEnum() != CellType.STRING || c2.getCellTypeEnum() != CellType.STRING) {
 					continue;
 				}
 				String col1 = c1.getStringCellValue().trim();
@@ -127,8 +118,7 @@ public class LangTool {
 					transFile(targetFile, 3, 4);
 					System.out.println("完成翻译：" + targetFile.getName());
 				} catch (Exception e) {
-					System.out.println("【错误】翻译出错：" + targetFile.getName() + ":"
-							+ e.getMessage());
+					System.out.println("【错误】翻译出错：" + targetFile.getName() + ":" + e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -136,13 +126,9 @@ public class LangTool {
 
 	}
 
-	public final static File transFile(File file, int rawColIdx, int destColIdx)
-			throws InvalidFormatException, IOException {
-		String xlsName = file.getAbsolutePath().substring(0,
-				file.getAbsolutePath().indexOf(".x"));
-		File xls = new File(xlsName + "_"
-				+ (new SimpleDateFormat("yyyyMMdd翻译")).format(new Date())
-				+ ".xlsx");
+	public final static File transFile(File file, int rawColIdx, int destColIdx) throws InvalidFormatException, IOException {
+		String xlsName = file.getAbsolutePath().substring(0, file.getAbsolutePath().indexOf(".x"));
+		File xls = new File(xlsName + "_" + (new SimpleDateFormat("yyyyMMdd翻译")).format(new Date()) + ".xlsx");
 		if (xls.exists()) {
 			xls.delete();
 		}
@@ -183,21 +169,27 @@ public class LangTool {
 	}
 
 	public static void copyCell(XSSFCell rawCell, XSSFCell destCell) {
-		destCell.setCellType(rawCell.getCellType());
-		switch (rawCell.getCellType()) {
-		case XSSFCell.CELL_TYPE_BOOLEAN:
+		destCell.setCellType(rawCell.getCellTypeEnum());
+		destCell.setCellComment(rawCell.getCellComment());
+		CellStyle destStyle = destCell.getRow().getSheet().getWorkbook().createCellStyle();
+		destStyle.cloneStyleFrom(rawCell.getCellStyle());
+		destCell.setCellStyle(destStyle);
+		switch (rawCell.getCellTypeEnum()) {
+		case BOOLEAN:
 			destCell.setCellValue(rawCell.getBooleanCellValue());
 			break;
-		case XSSFCell.CELL_TYPE_STRING:
+		case STRING:
 			destCell.setCellValue(rawCell.getStringCellValue());
 			break;
-		case XSSFCell.CELL_TYPE_NUMERIC:
+		case NUMERIC:
 			destCell.setCellValue(rawCell.getNumericCellValue());
 			break;
-		case XSSFCell.CELL_TYPE_BLANK:
+		case FORMULA:
+			destCell.setCellFormula(rawCell.getCellFormula());
+		case BLANK:
 			break;
 		default:
-			System.err.println("unknown cell type:" + rawCell.getCellType());
+			System.err.println("unknown cell type:" + rawCell.getCellTypeEnum());
 		}
 	}
 
@@ -238,26 +230,21 @@ public class LangTool {
 
 	// 从session读取词库翻译文件
 	@SuppressWarnings("unchecked")
-	public static File transFile(File file, HttpSession session)
-			throws Exception {
+	public static File transFile(File file, HttpSession session) throws Exception {
 		if (!file.isFile()) {
 			return null;
 		}
 
-		ILangFileHandler langHandler = LangFileFactory.getHandler(file
-				.getName());
+		ILangFileHandler langHandler = LangFileFactory.getHandler(file.getName());
 		if (langHandler == null) {
 			return null;
 		}
-		return langHandler.trans(file, (Map<String, String>) session
-				.getAttribute(LangConst.SESSION_KEY_WORDS),
-				(List<String>) session
-						.getAttribute(LangConst.SESSION_KEY_WORDS_INDEX));
+		return langHandler.trans(file, (Map<String, String>) session.getAttribute(LangConst.SESSION_KEY_WORDS),
+				(List<String>) session.getAttribute(LangConst.SESSION_KEY_WORDS_INDEX));
 	}
 
 	// 初始化词库入session
-	public static void loadWords(File wordsDir, HttpSession session)
-			throws Exception {
+	public static void loadWords(File wordsDir, HttpSession session) throws Exception {
 		Map<String, String> wordsCache = new TreeMap<String, String>();
 		List<String> wordsIndexCache = new ArrayList<String>();
 		for (File file : wordsDir.listFiles()) {
@@ -268,12 +255,9 @@ public class LangTool {
 	}
 
 	public static String quote(String str) {
-		return str.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\{", "\\\\\\{")
-				.replaceAll("\\}", "\\\\\\}").replaceAll("\\$", "\\\\\\$")
-				.replaceAll("\\(", "\\\\\\(").replaceAll("\\)", "\\\\\\)")
-				.replaceAll("\\*", "\\\\\\*").replaceAll("\\+", "\\\\\\+")
-				.replaceAll("\\^", "\\\\\\^").replaceAll("\\[", "\\\\\\[")
-				.replaceAll("\\]", "\\\\\\]").replaceAll("\\?", "\\\\\\?")
+		return str.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\{", "\\\\\\{").replaceAll("\\}", "\\\\\\}").replaceAll("\\$", "\\\\\\$")
+				.replaceAll("\\(", "\\\\\\(").replaceAll("\\)", "\\\\\\)").replaceAll("\\*", "\\\\\\*").replaceAll("\\+", "\\\\\\+")
+				.replaceAll("\\^", "\\\\\\^").replaceAll("\\[", "\\\\\\[").replaceAll("\\]", "\\\\\\]").replaceAll("\\?", "\\\\\\?")
 				.replaceAll("\\|", "\\\\\\|");
 	}
 
@@ -282,14 +266,12 @@ public class LangTool {
 	}
 
 	// 统计文件信息
-	public static TwoTuple<StatsInfo, JSONObject> statsFile(File file,
-			Map<String, String> params) throws Exception {
+	public static TwoTuple<StatsInfo, JSONObject> statsFile(File file, Map<String, String> params) throws Exception {
 		if (!file.isFile()) {
 			return null;
 		}
 
-		ILangFileHandler langHandler = LangFileFactory.getHandler(file
-				.getName());
+		ILangFileHandler langHandler = LangFileFactory.getHandler(file.getName());
 		if (langHandler == null) {
 			return null;
 		}
@@ -299,8 +281,7 @@ public class LangTool {
 		statsJson.put("fileType", info.getFileType());
 		if (info.getFileType() == FileTypeConst.FILE_TYPE_EXCEL) {
 			JSONArray details = new JSONArray();
-			for (Entry<String, Map<String, Long>> entry : info
-					.getExcelDetailMap().entrySet()) {
+			for (Entry<String, Map<String, Long>> entry : info.getExcelDetailMap().entrySet()) {
 				JSONObject sheetSub = new JSONObject();
 				JSONArray sub = new JSONArray();
 				for (Entry<String, Long> entry1 : entry.getValue().entrySet()) {
