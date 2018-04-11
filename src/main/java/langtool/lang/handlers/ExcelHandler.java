@@ -82,6 +82,8 @@ public class ExcelHandler implements ILangFileHandler {
 				}
 				int colNum = row.getLastCellNum();
 				for (int j = 0; j < colNum; j++) {
+					if(row.getCell(j) == null)
+						continue;
 					XSSFCell newCol = newRow.getCell(j);
 					if (newCol == null) {
 						newCol = newRow.createCell(j);
@@ -98,6 +100,7 @@ public class ExcelHandler implements ILangFileHandler {
 						destCol = newRow.getCell(flags.get(j));
 						if (destCol == null) {
 							destCol = newRow.createCell(flags.get(j));
+							LangTool.copyCell(row.getCell(j), destCol);
 						}
 					}else{
 						continue;
