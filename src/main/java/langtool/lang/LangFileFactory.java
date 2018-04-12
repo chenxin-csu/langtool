@@ -1,12 +1,12 @@
 package langtool.lang;
 
+import langtool.lang.handlers.ExcelHandlerV2;
+import langtool.lang.handlers.TextHandler;
+import langtool.lang.handlers.WordHandler;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import langtool.lang.handlers.ExcelHandler;
-import langtool.lang.handlers.TextHandler;
-import langtool.lang.handlers.WordHandler;
 
 public class LangFileFactory {
 
@@ -49,7 +49,7 @@ public class LangFileFactory {
 
 	public enum LangFileType {
 		DOC("word", WordHandler.class, ".doc"),
-		XLS("excel", ExcelHandler.class, ".xls"),
+		XLS("excel", ExcelHandlerV2.class, ".xls"),
 		TEXT("text", TextHandler.class, COMMON),
 
 		;

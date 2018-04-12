@@ -4,21 +4,14 @@ import langtool.lang.FileTypeConst;
 import langtool.lang.ILangFileHandler;
 import langtool.lang.LangFileFactory;
 import langtool.util.StringUtil;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
@@ -109,64 +102,64 @@ public class LangTool {
 		System.out.println("词库总数：" + wordsMap.size());
 	}
 
-	static void trans(final File targetFile) throws Exception {
-		exe.execute(new Runnable() {
-			// @Override
-			public void run() {
-				try {
-					System.out.println("开始翻译：" + targetFile.getName() + "...");
-					transFile(targetFile, 3, 4);
-					System.out.println("完成翻译：" + targetFile.getName());
-				} catch (Exception e) {
-					System.out.println("【错误】翻译出错：" + targetFile.getName() + ":" + e.getMessage());
-					e.printStackTrace();
-				}
-			}
-		});
+//	static void trans(final File targetFile) throws Exception {
+//		exe.execute(new Runnable() {
+//			// @Override
+//			public void run() {
+//				try {
+//					System.out.println("开始翻译：" + targetFile.getName() + "...");
+//					transFile(targetFile, 3, 4);
+//					System.out.println("完成翻译：" + targetFile.getName());
+//				} catch (Exception e) {
+//					System.out.println("【错误】翻译出错：" + targetFile.getName() + ":" + e.getMessage());
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//
+//	}
 
-	}
-
-	public final static File transFile(File file, int rawColIdx, int destColIdx) throws InvalidFormatException, IOException {
-		String xlsName = file.getAbsolutePath().substring(0, file.getAbsolutePath().indexOf(".x"));
-		File xls = new File(xlsName + "_" + (new SimpleDateFormat("yyyyMMdd翻译")).format(new Date()) + ".xlsx");
-		if (xls.exists()) {
-			xls.delete();
-		}
-		xls.createNewFile();
-		FileOutputStream fos = new FileOutputStream(xls);
-		XSSFWorkbook wb = new XSSFWorkbook(file);
-		XSSFSheet sheet = wb.getSheetAt(0);
-
-		XSSFWorkbook newWb = new XSSFWorkbook();
-		XSSFSheet newSheet = newWb.createSheet();
-		for (int i = 1; i < sheet.getLastRowNum(); i++) {
-			XSSFRow newRow = newSheet.createRow(i);
-			XSSFRow row = sheet.getRow(i);
-			for (int j = 0; j < rawColIdx - 1; j++) {
-				XSSFCell newCol = newRow.createCell(j);
-				copyCell(row.getCell(j), newCol);
-			}
-			XSSFCell newCol2 = newRow.createCell(rawColIdx - 1);
-			XSSFCell newCol3 = newRow.createCell(destColIdx - 1);
-
-			String rawStr = row.getCell(2).getStringCellValue();
-			newCol2.setCellValue(rawStr);
-
-			// TODO trans
-			String doneStr = new String(rawStr);
-			for (String word : WORDS_INDEX) {
-				doneStr = doneStr.replaceAll(word, WORDS.get(word));
-			}
-			newCol3.setCellValue(doneStr);
-			// System.out.println("[INFO]trans [" + rawStr + "] to [" + doneStr
-			// + "]");
-		}
-		newWb.write(fos);
-		fos.close();
-		wb.close();
-		newWb.close();
-		return xls;
-	}
+//	public final static File transFile(File file, int rawColIdx, int destColIdx) throws InvalidFormatException, IOException {
+//		String xlsName = file.getAbsolutePath().substring(0, file.getAbsolutePath().indexOf(".x"));
+//		File xls = new File(xlsName + "_" + (new SimpleDateFormat("yyyyMMdd翻译")).format(new Date()) + ".xlsx");
+//		if (xls.exists()) {
+//			xls.delete();
+//		}
+//		xls.createNewFile();
+//		FileOutputStream fos = new FileOutputStream(xls);
+//		XSSFWorkbook wb = new XSSFWorkbook(file);
+//		XSSFSheet sheet = wb.getSheetAt(0);
+//
+//		XSSFWorkbook newWb = new XSSFWorkbook();
+//		XSSFSheet newSheet = newWb.createSheet();
+//		for (int i = 1; i < sheet.getLastRowNum(); i++) {
+//			XSSFRow newRow = newSheet.createRow(i);
+//			XSSFRow row = sheet.getRow(i);
+//			for (int j = 0; j < rawColIdx - 1; j++) {
+//				XSSFCell newCol = newRow.createCell(j);
+//				copyCell(row.getCell(j), newCol);
+//			}
+//			XSSFCell newCol2 = newRow.createCell(rawColIdx - 1);
+//			XSSFCell newCol3 = newRow.createCell(destColIdx - 1);
+//
+//			String rawStr = row.getCell(2).getStringCellValue();
+//			newCol2.setCellValue(rawStr);
+//
+//			// TODO trans
+//			String doneStr = new String(rawStr);
+//			for (String word : WORDS_INDEX) {
+//				doneStr = doneStr.replaceAll(word, WORDS.get(word));
+//			}
+//			newCol3.setCellValue(doneStr);
+//			// System.out.println("[INFO]trans [" + rawStr + "] to [" + doneStr
+//			// + "]");
+//		}
+//		newWb.write(fos);
+//		fos.close();
+//		wb.close();
+//		newWb.close();
+//		return xls;
+//	}
 
 	public static void copyCell(XSSFCell rawCell, XSSFCell destCell) {
 		destCell.setCellType(rawCell.getCellTypeEnum());
@@ -174,23 +167,41 @@ public class LangTool {
 		CellStyle destStyle = destCell.getRow().getSheet().getWorkbook().createCellStyle();
 		destStyle.cloneStyleFrom(rawCell.getCellStyle());
 		destCell.setCellStyle(destStyle);
+		destCell.setHyperlink(rawCell.getHyperlink());
 		switch (rawCell.getCellTypeEnum()) {
 		case BOOLEAN:
 			destCell.setCellValue(rawCell.getBooleanCellValue());
 			break;
 		case STRING:
-			destCell.setCellValue(rawCell.getStringCellValue());
+			try {
+				XSSFRichTextString rawRich = rawCell.getRichStringCellValue();
+				if (rawRich != null && rawRich.hasFormatting()) {
+					XSSFRichTextString richTextString = new XSSFRichTextString();
+					for (int i = 0; i < rawCell.getRichStringCellValue().length(); i++) {
+						richTextString.applyFont(i, i + 1, rawCell.getRichStringCellValue().getFontAtIndex(i));
+					}
+					destCell.setCellValue(richTextString);
+				} else {
+					destCell.setCellValue(rawCell.getStringCellValue());
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 			break;
 		case NUMERIC:
 			destCell.setCellValue(rawCell.getNumericCellValue());
 			break;
 		case FORMULA:
 			destCell.setCellFormula(rawCell.getCellFormula());
+			destCell.setCellValue(rawCell.getRawValue());
 		case BLANK:
 			break;
 		default:
 			System.err.println("unknown cell type:" + rawCell.getCellTypeEnum());
 		}
+
 	}
 
 	// public static void main(String[] args) {
