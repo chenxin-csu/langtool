@@ -79,12 +79,15 @@ public class ExcelHandlerV2 implements ILangFileHandler {
             }
 
             //支持shape中的文本框
-            List<XSSFShape> shapes = sheet.getDrawingPatriarch().getShapes();
-            for (XSSFShape shape : shapes) {
-                if (shape instanceof XSSFSimpleShape) {
-                    String text = ((XSSFSimpleShape) shape).getText();
-                    if (!StringUtil.isEmpty(text)) {
-                        ((XSSFSimpleShape) shape).setText(replaceWords(words, wordsIdx, text));
+            if(sheet.getDrawingPatriarch()!=null)
+            {
+                List<XSSFShape> shapes = sheet.getDrawingPatriarch().getShapes();
+                for (XSSFShape shape : shapes) {
+                    if (shape instanceof XSSFSimpleShape) {
+                        String text = ((XSSFSimpleShape) shape).getText();
+                        if (!StringUtil.isEmpty(text)) {
+                            ((XSSFSimpleShape) shape).setText(replaceWords(words, wordsIdx, text));
+                        }
                     }
                 }
             }
