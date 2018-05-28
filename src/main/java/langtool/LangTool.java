@@ -169,37 +169,37 @@ public class LangTool {
 		destCell.setCellStyle(destStyle);
 		destCell.setHyperlink(rawCell.getHyperlink());
 		switch (rawCell.getCellTypeEnum()) {
-		case BOOLEAN:
-			destCell.setCellValue(rawCell.getBooleanCellValue());
-			break;
-		case STRING:
-			try {
-				XSSFRichTextString rawRich = rawCell.getRichStringCellValue();
-				if (rawRich != null && rawRich.hasFormatting()) {
-					XSSFRichTextString richTextString = new XSSFRichTextString();
-					for (int i = 0; i < rawCell.getRichStringCellValue().length(); i++) {
-						richTextString.applyFont(i, i + 1, rawCell.getRichStringCellValue().getFontAtIndex(i));
+			case BOOLEAN:
+				destCell.setCellValue(rawCell.getBooleanCellValue());
+				break;
+			case STRING:
+				try {
+					XSSFRichTextString rawRich = rawCell.getRichStringCellValue();
+					if (rawRich != null && rawRich.hasFormatting()) {
+						XSSFRichTextString richTextString = new XSSFRichTextString();
+						for (int i = 0; i < rawCell.getRichStringCellValue().length(); i++) {
+							richTextString.applyFont(i, i + 1, rawCell.getRichStringCellValue().getFontAtIndex(i));
+						}
+						destCell.setCellValue(richTextString);
+					} else {
+						destCell.setCellValue(rawCell.getStringCellValue());
 					}
-					destCell.setCellValue(richTextString);
-				} else {
-					destCell.setCellValue(rawCell.getStringCellValue());
+
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			break;
-		case NUMERIC:
-			destCell.setCellValue(rawCell.getNumericCellValue());
-			break;
-		case FORMULA:
-			destCell.setCellFormula(rawCell.getCellFormula());
-			destCell.setCellValue(rawCell.getRawValue());
-		case BLANK:
-			break;
-		default:
-			System.err.println("unknown cell type:" + rawCell.getCellTypeEnum());
+				break;
+			case NUMERIC:
+				destCell.setCellValue(rawCell.getNumericCellValue());
+				break;
+			case FORMULA:
+				destCell.setCellFormula(rawCell.getCellFormula());
+				destCell.setCellValue(rawCell.getRawValue());
+			case BLANK:
+				break;
+			default:
+				System.err.println("unknown cell type:" + rawCell.getCellTypeEnum());
 		}
 
 	}
@@ -295,13 +295,15 @@ public class LangTool {
 			for (Entry<String, Map<String, Long>> entry : info.getExcelDetailMap().entrySet()) {
 				JSONObject sheetSub = new JSONObject();
 				JSONArray sub = new JSONArray();
+				long totalCnt = 0;
 				for (Entry<String, Long> entry1 : entry.getValue().entrySet()) {
 					JSONObject col = new JSONObject();
 					col.put("colName", entry1.getKey() + "列");
 					col.put("cnt", entry1.getValue());
+					totalCnt += entry1.getValue();
 					sub.put(col);
 				}
-				sheetSub.put("sheetName", entry.getKey());
+				sheetSub.put("sheetName", "【" + entry.getKey() + "】" + totalCnt);
 				sheetSub.put("sheetDetail", sub);
 				details.put(sheetSub);
 			}
