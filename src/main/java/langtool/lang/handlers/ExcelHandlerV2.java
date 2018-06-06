@@ -226,26 +226,26 @@ public class ExcelHandlerV2 implements ILangFileHandler {
             int sheetCnt = wb.getNumberOfSheets();
             for (int sheetIdx = 0; sheetIdx < sheetCnt; sheetIdx++) {
                 XSSFSheet sheet = wb.getSheetAt(sheetIdx);
-                // flag
-                XSSFRow flagRow = sheet.getRow(0);
-                if (flagRow == null) {
-                    continue;
-                }
+
                 Map<String, Long> sheetStatsMap = new TreeMap<String, Long>();
                 detailMap.put(sheet.getSheetName(), sheetStatsMap);
+                // flag
                 Set<Integer> flags = new HashSet<Integer>();
-                int firstRowCellNum = flagRow.getLastCellNum();
-
-                for (int i = 0; i < firstRowCellNum; i++) {
-                    XSSFCell cell = flagRow.getCell(i);
-                    if (cell == null) {
-                        continue;
-                    }
-                    String c = cell.getStringCellValue();
-                    if (!StringUtil.isEmpty(c) && c.contains("lang")) {
-                        flags.add(i);
+                XSSFRow flagRow = sheet.getRow(0);
+                if (flagRow != null) {
+                    int firstRowCellNum = flagRow.getLastCellNum();
+                    for (int i = 0; i < firstRowCellNum; i++) {
+                        XSSFCell cell = flagRow.getCell(i);
+                        if (cell == null) {
+                            continue;
+                        }
+                        String c = cell.getStringCellValue();
+                        if (!StringUtil.isEmpty(c) && c.contains("lang")) {
+                            flags.add(i);
+                        }
                     }
                 }
+
                 XSSFRow row = null;
                 int rowStart = flags.size() > 0 ? 1 : 0;
                 flags.addAll(StatsUtil.getExcelLangColIndexFromParams(params));
@@ -264,6 +264,9 @@ public class ExcelHandlerV2 implements ILangFileHandler {
                         if (cell == null) {
                             continue;
                         }
+                        if (cell.getCellTypeEnum() != CellType.STRING)
+                            continue;
+
                         String line = cell.getStringCellValue();
                         if (StringUtil.isEmpty(line)) {
                             continue;

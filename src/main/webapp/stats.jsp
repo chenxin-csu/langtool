@@ -256,15 +256,14 @@ div.container {
 				{% if (file.deleteUrl) { %}
 					<div><span class="label label-success">上传成功</span></div>
 				{% }else{ %}
-					<div><span class="label label-success">统计完成</span> 
-						<br>文件字数：{%=file.stats.totalCnt%}<br>
+					<div><span class="label label-success">统计完成</span><br><br>
 						{% if(file.stats.fileType == 1) { %}
 						{% for(var sub in file.stats.colDetail) { %}
-						工作表：{%=file.stats.colDetail[sub].sheetName%}&nbsp;&nbsp;|&nbsp;&nbsp;
+						<font color="green">工作表：{%=file.stats.colDetail[sub].sheetName%}</font><br>
 						{% for(var e in file.stats.colDetail[sub].sheetDetail) { %}
 							{%=file.stats.colDetail[sub].sheetDetail[e].colName %}：{%=file.stats.colDetail[sub].sheetDetail[e].cnt %}&nbsp;&nbsp;&nbsp;
 						{% } %}
-						<br>
+						<br><br>
 						{%}%}
 						{%}%}
 					</div>
