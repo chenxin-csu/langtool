@@ -60,10 +60,10 @@ public class FileUtil {
 
 	}
 
-	public static File checkDoneDir() {
+	public static File checkDoneDir(String kwDir) {
 		String wsPath = LangToolRuntimeContext.getContext().get(THREAD_LOCAL_KEY_WS);
-        File subDir = new File(wsPath + PATH_SPLITER + FILES + PATH_SPLITER + TMP_PATH + PATH_SPLITER);
-        if (!subDir.exists()) {
+		File subDir = new File(wsPath + kwDir + PATH_SPLITER + DONE_PATH + PATH_SPLITER);
+		if (!subDir.exists()) {
 			subDir.mkdirs();
 		}
 		return subDir;

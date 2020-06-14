@@ -46,7 +46,7 @@
         }
 
         html, body {
-            background-image: url('./img/bg.png');
+            background-image: url('./img/ali.png');
             background-repeat: no-repeat;
         ! important;
             background-position: bottom right;
@@ -119,15 +119,12 @@
     </p>
     <div class="help_panel">
         <p>
-            1、词库文件格式：支持<b>Excel2007(xlsx)</b>及更新版本格式。单数列为词源，偶数列为相应词源的翻译,支持多列词源。
+            1、原文件和翻译文件格式：支持<b>Excel2007(xlsx)</b>及更新版本格式。会自动对@对话进行一一映射,形成翻译词库,所以需保证两个文档中@对话可以一一对应。
         </p>
         <p>
-            2、翻译文件格式：<b>Excel2007(xlsx)</b>和<b>Word2007(docx)</b>及更新版本格式以及<b>文本文档(txt/xml/yml等)</b>。<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用Excel时，需手动添加第一行，用"lang"标记需要翻译的列。例如，A列内容需要翻译到C列，则在A列列头写「lang:C」，如果只写「lang」则默认翻译到下一列。<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如果Excel不添加「lang」一行,则在原单元格进行翻译替换。(v3.0)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Word文件将进行全文搜索和替换，并保留原格式及图片，暂不支持表格。
+            2、填充表格格式：<b>Excel2007(xlsx)</b>及更新版本格式,第一列为原对话列,第二列为复制填充的列。<br>
         </p>
-        <p>3、开始工作吧~！史迪奇在看着你呐！！</p>
+        <p>3、制作一朵云彩 ——阿狸！！</p>
     </div>
 </div>
 

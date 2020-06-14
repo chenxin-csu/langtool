@@ -4,11 +4,14 @@ public class LangConst {
 
 	public static final String PATH_SPLITER = "/";
 	public static final String WORKSPACE_PATH = "upload";
-	public static final String WORDS = "words";
-	public static final String FILES = "files";
+	public static final String TRANS = "trans";
+	public static final String TRANS_WORDS = "words";
+	public static final String TRANS_FILES = "files";
 	public static final String STATS = "stats";
 	public static final String FILLS = "fills";
-	public static final String TMP_PATH = "done";
+	public static final String FILLS_SRC = "src";
+	public static final String FILLS_DST = "dst";
+	public static final String DONE_PATH = "done";
 
 	public static final String THREAD_LOCAL_KEY_WS = "workspace_path";
 

@@ -6,7 +6,6 @@ import langtool.lang.LangFileFactory;
 import langtool.util.StringUtil;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.util.SystemOutLogger;
 import org.apache.poi.xssf.usermodel.*;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -19,8 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class LangTool {
 
@@ -68,7 +65,7 @@ public class LangTool {
 				continue;
 			}
 			int colNum = row.getLastCellNum();
-			for (int j = 0; j < colNum; ) {
+			for (int j = 0; j < colNum;) {
 				// System.out.println("load col:" + j);
 				if (row.getCell(j) == null || row.getCell(j + 1) == null) {
 					j += 2;
@@ -104,7 +101,6 @@ public class LangTool {
 		});
 		System.out.println("词库总数：" + wordsMap.size());
 	}
-
 
 	private static void loadFillSrc(File[] files, Map<String, String> wordsMapA, Map<String, String> wordsMapB) throws Exception {
 		if (files.length != 2) {
@@ -171,18 +167,19 @@ public class LangTool {
 		}
 
 		if (aList.size() != bList.size()) {
-//            int max = Math.max(aList.size(), bList.size());
-//            for (int i = 0; i < max; i++) {
-//                if (i >= aList.size()) {
-//                    System.out.println("null\t=>\t" + bList.get(i));
-//                } else if (i >= bList.size()) {
-//                    System.out.println(aList.get(i) + "\t=>\tnull");
-//                } else {
-//                    System.out.println(aList.get(i) + "\t=>\t" + bList.get(i));
-//                }
-//                System.out.println("----------------------------------------------");
-//            }
-			throw new RuntimeException("原文件和翻译文件 @对话 不能一一对应，文件 “" + files[0].getName() + "” 对话数：" + aList.size() + "， 文件 “" + files[1].getName() + "” 对话数：" + bList.size());
+			//            int max = Math.max(aList.size(), bList.size());
+			//            for (int i = 0; i < max; i++) {
+			//                if (i >= aList.size()) {
+			//                    System.out.println("null\t=>\t" + bList.get(i));
+			//                } else if (i >= bList.size()) {
+			//                    System.out.println(aList.get(i) + "\t=>\tnull");
+			//                } else {
+			//                    System.out.println(aList.get(i) + "\t=>\t" + bList.get(i));
+			//                }
+			//                System.out.println("----------------------------------------------");
+			//            }
+			throw new RuntimeException("原文件和翻译文件 @对话 不能一一对应，文件 “" + files[0].getName() + "” 对话数：" + aList.size() + "， 文件 “" + files[1].getName()
+					+ "” 对话数：" + bList.size());
 		}
 
 		for (int i = 0; i < aList.size(); i++) {
@@ -190,7 +187,6 @@ public class LangTool {
 			wordsMapB.put(bList.get(i), aList.get(i));
 		}
 	}
-
 
 	public static void copyCell(XSSFCell rawCell, XSSFCell destCell) {
 		destCell.setCellType(rawCell.getCellTypeEnum());
@@ -200,41 +196,40 @@ public class LangTool {
 		destCell.setCellStyle(destStyle);
 		destCell.setHyperlink(rawCell.getHyperlink());
 		switch (rawCell.getCellTypeEnum()) {
-			case BOOLEAN:
-				destCell.setCellValue(rawCell.getBooleanCellValue());
-				break;
-			case STRING:
-				try {
-					XSSFRichTextString rawRich = rawCell.getRichStringCellValue();
-					if (rawRich != null && rawRich.hasFormatting()) {
-						XSSFRichTextString richTextString = new XSSFRichTextString();
-						for (int i = 0; i < rawCell.getRichStringCellValue().length(); i++) {
-							richTextString.applyFont(i, i + 1, rawCell.getRichStringCellValue().getFontAtIndex(i));
-						}
-						destCell.setCellValue(richTextString);
-					} else {
-						destCell.setCellValue(rawCell.getStringCellValue());
+		case BOOLEAN:
+			destCell.setCellValue(rawCell.getBooleanCellValue());
+			break;
+		case STRING:
+			try {
+				XSSFRichTextString rawRich = rawCell.getRichStringCellValue();
+				if (rawRich != null && rawRich.hasFormatting()) {
+					XSSFRichTextString richTextString = new XSSFRichTextString();
+					for (int i = 0; i < rawCell.getRichStringCellValue().length(); i++) {
+						richTextString.applyFont(i, i + 1, rawCell.getRichStringCellValue().getFontAtIndex(i));
 					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
+					destCell.setCellValue(richTextString);
+				} else {
+					destCell.setCellValue(rawCell.getStringCellValue());
 				}
 
-				break;
-			case NUMERIC:
-				destCell.setCellValue(rawCell.getNumericCellValue());
-				break;
-			case FORMULA:
-				destCell.setCellFormula(rawCell.getCellFormula());
-				destCell.setCellValue(rawCell.getRawValue());
-			case BLANK:
-				break;
-			default:
-				System.err.println("unknown cell type:" + rawCell.getCellTypeEnum());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			break;
+		case NUMERIC:
+			destCell.setCellValue(rawCell.getNumericCellValue());
+			break;
+		case FORMULA:
+			destCell.setCellFormula(rawCell.getCellFormula());
+			destCell.setCellValue(rawCell.getRawValue());
+		case BLANK:
+			break;
+		default:
+			System.err.println("unknown cell type:" + rawCell.getCellTypeEnum());
 		}
 
 	}
-
 
 	// 从session读取词库翻译文件
 	@SuppressWarnings("unchecked")
@@ -327,8 +322,8 @@ public class LangTool {
 		if (langHandler == null) {
 			return null;
 		}
-		return langHandler.trans(file, (Map<String, String>) session.getAttribute(LangConst.SESSION_KEY_WORDS),
-				(List<String>) session.getAttribute(LangConst.SESSION_KEY_WORDS_INDEX));
+		return langHandler.fill(file, (Map<String, String>) session.getAttribute(LangConst.SESSION_KEY_FILLS_A),
+				(Map<String, String>) session.getAttribute(LangConst.SESSION_KEY_FILLS_B));
 	}
 
 }

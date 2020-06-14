@@ -1,7 +1,16 @@
 package langtool.lang.handlers;
 
-import static langtool.LangConst.PATH_SPLITER;
-import static langtool.LangConst.TMP_PATH;
+import langtool.CharacterUnifiyEnum;
+import langtool.LangTool;
+import langtool.StatsInfo;
+import langtool.lang.FileTypeConst;
+import langtool.lang.ILangFileHandler;
+import langtool.util.FileUtil;
+import langtool.util.StringUtil;
+import langtool.util.XWPFRunBean;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,27 +22,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import langtool.CharacterUnifiyEnum;
-import langtool.LangTool;
-import langtool.StatsInfo;
-import langtool.lang.FileTypeConst;
-import langtool.lang.ILangFileHandler;
-import langtool.util.FileUtil;
-import langtool.util.StringUtil;
-import langtool.util.XWPFRunBean;
-
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
+import static langtool.LangConst.TRANS_FILES;
+import static langtool.LangConst.PATH_SPLITER;
+import static langtool.LangConst.DONE_PATH;
 
 public class WordHandler implements ILangFileHandler {
 
 	// @Override
 	public File trans(File file, Map<String, String> words,
 					  List<String> wordsIdx) throws Exception {
-		FileUtil.checkDoneDir();
+		FileUtil.checkDoneDir(TRANS_FILES);
 		String docName = file.getAbsolutePath().replace(file.getName(), "");
-		docName += TMP_PATH + PATH_SPLITER + file.getName();
+		docName += DONE_PATH + PATH_SPLITER + file.getName();
 		docName = docName.substring(0, docName.indexOf(".doc"));
 		File doc = new File(docName + "_"
 				+ (new SimpleDateFormat("yyyyMMdd翻译")).format(new Date())
@@ -147,6 +147,6 @@ public class WordHandler implements ILangFileHandler {
 
 	@Override
 	public File fill(File file, Map<String, String> wordsA, Map<String, String> wordsB) throws Exception {
-		return null;
+		throw new RuntimeException("暂不支持Word格式填充表格");
 	}
 }

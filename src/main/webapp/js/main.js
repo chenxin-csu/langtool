@@ -29,12 +29,12 @@ $(function() {
 	});
 
     $('#fileupload_fills1').fileupload({
-        url: 'fill?type=fill_src',
+        url: 'fill?type=src',
         singleFileUploads: false,
     });
 
     $('#fileupload_fills2').fileupload({
-        url: 'fill?type=fill_dst',
+        url: 'fill?type=dst',
         singleFileUploads: false,
     });
 

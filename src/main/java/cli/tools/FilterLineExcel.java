@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 import static langtool.LangConst.PATH_SPLITER;
-import static langtool.LangConst.TMP_PATH;
+import static langtool.LangConst.DONE_PATH;
 
 /**
  * Created by jackie on 2020/6/11.
@@ -44,8 +44,8 @@ public class FilterLineExcel {
 		try {
 
 			String xlsName = file.getAbsolutePath().replace(file.getName(), "");
-			String doneDirPath = xlsName + TMP_PATH;
-			xlsName += TMP_PATH + PATH_SPLITER + file.getName();
+			String doneDirPath = xlsName + DONE_PATH;
+			xlsName += DONE_PATH + PATH_SPLITER + file.getName();
 			xlsName = xlsName.substring(0, xlsName.indexOf(".x"));
 
 			File doneDir = new File(doneDirPath);

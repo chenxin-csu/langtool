@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static langtool.LangConst.PATH_SPLITER;
-import static langtool.LangConst.TMP_PATH;
+import static langtool.LangConst.DONE_PATH;
 
 /**
  *
@@ -57,8 +57,8 @@ public class HeadExcels {
 		XSSFWorkbook nwb = new XSSFWorkbook();
 		try {
 			String xlsName = dir.getAbsolutePath();
-			String doneDirPath = xlsName + TMP_PATH;
-			xlsName += TMP_PATH + PATH_SPLITER + "台词整理.xlsx";
+			String doneDirPath = xlsName + DONE_PATH;
+			xlsName += DONE_PATH + PATH_SPLITER + "台词整理.xlsx";
 
 			File doneDir = new File(doneDirPath);
 			if (!doneDir.exists()) {
@@ -103,7 +103,7 @@ public class HeadExcels {
 
 			XSSFSheet nSheet = nwb.createSheet(sheetName);
 			int nRowIdx = 0;
-			for (int j = 0; j < sheet.getLastRowNum(); j++) {
+			for (int j = 0; j <= sheet.getLastRowNum(); j++) {
 				XSSFRow row = sheet.getRow(j);
 				if (row == null) {
 					continue;
@@ -163,7 +163,7 @@ public class HeadExcels {
 
 			XSSFSheet nSheet = nwb.createSheet(sheetName);
 			int nRowIdx = 0;
-			for (int j = 0; j < sheet.getLastRowNum(); j++) {
+			for (int j = 0; j <= sheet.getLastRowNum(); j++) {
 				HSSFRow row = sheet.getRow(j);
 				if (row == null) {
 					continue;

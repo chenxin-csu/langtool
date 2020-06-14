@@ -1,15 +1,5 @@
 package langtool.lang.handlers;
 
-import static langtool.LangConst.PATH_SPLITER;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.List;
-import java.util.Map;
-
 import langtool.CharacterUnifiyEnum;
 import langtool.LangTool;
 import langtool.StatsInfo;
@@ -17,20 +7,25 @@ import langtool.lang.FileTypeConst;
 import langtool.lang.ILangFileHandler;
 import langtool.util.FileUtil;
 
+import java.io.*;
+import java.util.List;
+import java.util.Map;
+
+import static langtool.LangConst.TRANS_FILES;
+import static langtool.LangConst.PATH_SPLITER;
+
 /**
  * @author xin.chen
  */
 public class TextHandler implements ILangFileHandler {
 
 	@Override
-	public File trans(File file, Map<String, String> words,
-					  List<String> wordsIdx) throws Exception {
+	public File trans(File file, Map<String, String> words, List<String> wordsIdx) throws Exception {
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		String line = null;
-		File subDir = FileUtil.checkDoneDir();
-		File txt = new File(subDir.getAbsolutePath() + PATH_SPLITER
-				+ file.getName());
+		File subDir = FileUtil.checkDoneDir(TRANS_FILES);
+		File txt = new File(subDir.getAbsolutePath() + PATH_SPLITER + file.getName());
 		if (txt.exists()) {
 			txt.delete();
 		}
@@ -41,8 +36,7 @@ public class TextHandler implements ILangFileHandler {
 			doneStr = new String(line);
 			for (String word : wordsIdx) {
 				if (doneStr.contains(word)) {
-					doneStr = doneStr.replaceAll(LangTool.quote(word),
-							LangTool.quote(words.get(word)));
+					doneStr = doneStr.replaceAll(LangTool.quote(word), LangTool.quote(words.get(word)));
 				}
 			}
 			bw.write(doneStr + "\r\n");
@@ -54,8 +48,7 @@ public class TextHandler implements ILangFileHandler {
 	}
 
 	@Override
-	public StatsInfo stats(File file, Map<String, String> params)
-			throws Exception {
+	public StatsInfo stats(File file, Map<String, String> params) throws Exception {
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		String line = null;
@@ -73,6 +66,6 @@ public class TextHandler implements ILangFileHandler {
 
 	@Override
 	public File fill(File file, Map<String, String> wordsA, Map<String, String> wordsB) throws Exception {
-		return null;
+		throw new RuntimeException("暂不支持文本文档格式填充表格");
 	}
 }
