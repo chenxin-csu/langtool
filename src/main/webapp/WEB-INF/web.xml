@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee     http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
   <filter>
     <filter-name>LangToolFilter</filter-name>
     <filter-class>langtool.web.LangToolFilter</filter-class>
@@ -16,7 +19,17 @@
     <servlet-name>fileUpload</servlet-name>
     <url-pattern>fileUpload</url-pattern>
   </servlet-mapping>
-  <servlet>
+
+    <servlet>
+        <servlet-name>fill</servlet-name>
+        <servlet-class>langtool.web.FillServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>fill</servlet-name>
+        <url-pattern>fill</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
     <servlet-name>op</servlet-name>
     <servlet-class>langtool.web.OpServlet</servlet-class>
   </servlet>
@@ -24,7 +37,8 @@
     <servlet-name>op</servlet-name>
     <url-pattern>op</url-pattern>
   </servlet-mapping>
-  <welcome-file-list>
+
+    <welcome-file-list>
     <welcome-file>/index.jsp</welcome-file>
   </welcome-file-list>
 </web-app>

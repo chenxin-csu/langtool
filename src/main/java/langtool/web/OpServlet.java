@@ -49,7 +49,7 @@ public class OpServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String fileName = req.getParameter("file");
 		String filePath = req.getServletContext().getRealPath(PATH_SPLITER) + PATH_SPLITER + WORKSPACE_PATH + PATH_SPLITER
-				+ req.getSession(true).getId() + PATH_SPLITER + WORDS_PATH + PATH_SPLITER + fileName;
+				+ req.getSession(true).getId() + PATH_SPLITER + WORDS + PATH_SPLITER + fileName;
 		(new File(filePath)).delete();
 		JSONObject ret = new JSONObject();
 		JSONArray jsonArray = new JSONArray();

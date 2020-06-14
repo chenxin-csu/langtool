@@ -26,7 +26,7 @@ body {
 	font: 62.5% "Trebuchet MS", sans-serif;
 }
 
-div#tabs, div#tabs-1, div#tabs-2 {
+div#tabs, div#tabs-1, div#tabs-2, div#tabs-3 {
 	height: 100%;
 	margin: 0;
 	padding: 0;
@@ -44,13 +44,17 @@ iframe {
 		<ul>
 			<li><a href="#tabs-1">文件翻译</a></li>
 			<li><a href="#tabs-2">字数统计</a></li>
+            <li><a href="#tabs-3">复制填充</a></li>
 		</ul>
 		<div id="tabs-1">
 			<iframe src="trans.jsp" frameborder="0" scrolling="auto"></iframe>
 		</div>
 		<div id="tabs-2">
 			<iframe src="stats.jsp" frameborder="0" scrolling="auto"></iframe>
-		</div>
+        </div>
+        <div id="tabs-3">
+            <iframe src="fillback.jsp" frameborder="0" scrolling="auto"></iframe>
+        </div>
 	</div>
 </body>
 </html>

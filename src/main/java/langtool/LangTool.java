@@ -6,20 +6,23 @@ import langtool.lang.LangFileFactory;
 import langtool.util.StringUtil;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.util.SystemOutLogger;
 import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class LangTool {
-
-	private static ExecutorService exe = Executors.newFixedThreadPool(10);
 
 	private final static Map<String, String> WORDS = new TreeMap<String, String>();
 	private final static List<String> WORDS_INDEX = new ArrayList<String>();
@@ -65,7 +68,7 @@ public class LangTool {
 				continue;
 			}
 			int colNum = row.getLastCellNum();
-			for (int j = 0; j < colNum;) {
+			for (int j = 0; j < colNum; ) {
 				// System.out.println("load col:" + j);
 				if (row.getCell(j) == null || row.getCell(j + 1) == null) {
 					j += 2;
@@ -102,64 +105,92 @@ public class LangTool {
 		System.out.println("词库总数：" + wordsMap.size());
 	}
 
-//	static void trans(final File targetFile) throws Exception {
-//		exe.execute(new Runnable() {
-//			// @Override
-//			public void run() {
-//				try {
-//					System.out.println("开始翻译：" + targetFile.getName() + "...");
-//					transFile(targetFile, 3, 4);
-//					System.out.println("完成翻译：" + targetFile.getName());
-//				} catch (Exception e) {
-//					System.out.println("【错误】翻译出错：" + targetFile.getName() + ":" + e.getMessage());
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//
-//	}
 
-//	public final static File transFile(File file, int rawColIdx, int destColIdx) throws InvalidFormatException, IOException {
-//		String xlsName = file.getAbsolutePath().substring(0, file.getAbsolutePath().indexOf(".x"));
-//		File xls = new File(xlsName + "_" + (new SimpleDateFormat("yyyyMMdd翻译")).format(new Date()) + ".xlsx");
-//		if (xls.exists()) {
-//			xls.delete();
-//		}
-//		xls.createNewFile();
-//		FileOutputStream fos = new FileOutputStream(xls);
-//		XSSFWorkbook wb = new XSSFWorkbook(file);
-//		XSSFSheet sheet = wb.getSheetAt(0);
-//
-//		XSSFWorkbook newWb = new XSSFWorkbook();
-//		XSSFSheet newSheet = newWb.createSheet();
-//		for (int i = 1; i < sheet.getLastRowNum(); i++) {
-//			XSSFRow newRow = newSheet.createRow(i);
-//			XSSFRow row = sheet.getRow(i);
-//			for (int j = 0; j < rawColIdx - 1; j++) {
-//				XSSFCell newCol = newRow.createCell(j);
-//				copyCell(row.getCell(j), newCol);
-//			}
-//			XSSFCell newCol2 = newRow.createCell(rawColIdx - 1);
-//			XSSFCell newCol3 = newRow.createCell(destColIdx - 1);
-//
-//			String rawStr = row.getCell(2).getStringCellValue();
-//			newCol2.setCellValue(rawStr);
-//
-//			// TODO trans
-//			String doneStr = new String(rawStr);
-//			for (String word : WORDS_INDEX) {
-//				doneStr = doneStr.replaceAll(word, WORDS.get(word));
-//			}
-//			newCol3.setCellValue(doneStr);
-//			// System.out.println("[INFO]trans [" + rawStr + "] to [" + doneStr
-//			// + "]");
-//		}
-//		newWb.write(fos);
-//		fos.close();
-//		wb.close();
-//		newWb.close();
-//		return xls;
-//	}
+	private static void loadFillSrc(File[] files, Map<String, String> wordsMapA, Map<String, String> wordsMapB) throws Exception {
+		if (files.length != 2) {
+			throw new RuntimeException("原文件、翻译文件缺一不可哦，已上传文件数: " + files.length);
+		}
+		wordsMapA.clear();
+		wordsMapB.clear();
+
+		List<String> aList = new ArrayList<>();
+		List<String> bList = new ArrayList<>();
+
+		for (int i = 0; i < 2; i++) {
+			File file = files[i];
+			FileInputStream fis = new FileInputStream(file);
+			XWPFDocument xwpfDoc = new XWPFDocument(fis);
+			Iterator<XWPFParagraph> iterator = xwpfDoc.getParagraphsIterator();
+			XWPFParagraph para;
+			boolean start = false;
+			String line = "";
+			while (iterator.hasNext()) {
+				para = iterator.next();
+				List<XWPFRun> runs = para.getRuns();
+				String paraLine = "";
+				for (int j = 0; j < runs.size(); j++) {
+					paraLine += runs.get(j).toString();
+				}
+
+				if (StringUtil.isEmpty(paraLine)) {
+					if (start) {
+						start = false;
+						if (i == 0) {
+							aList.add(line);
+						} else {
+							bList.add(line);
+						}
+						line = "";
+					}
+					continue;
+				}
+
+				if (paraLine.startsWith("＠")) {
+					if (start) {
+						if (i == 0) {
+							aList.add(line);
+						} else {
+							bList.add(line);
+						}
+						line = "";
+					} else {
+						start = true;
+					}
+					continue;
+				}
+
+				if (start) {
+					if (StringUtil.isEmpty(line)) {
+						line = paraLine;
+					} else {
+						line += "\\n" + paraLine;
+					}
+				}
+			}
+			fis.close();
+		}
+
+		if (aList.size() != bList.size()) {
+//            int max = Math.max(aList.size(), bList.size());
+//            for (int i = 0; i < max; i++) {
+//                if (i >= aList.size()) {
+//                    System.out.println("null\t=>\t" + bList.get(i));
+//                } else if (i >= bList.size()) {
+//                    System.out.println(aList.get(i) + "\t=>\tnull");
+//                } else {
+//                    System.out.println(aList.get(i) + "\t=>\t" + bList.get(i));
+//                }
+//                System.out.println("----------------------------------------------");
+//            }
+			throw new RuntimeException("原文件和翻译文件 @对话 不能一一对应，文件 “" + files[0].getName() + "” 对话数：" + aList.size() + "， 文件 “" + files[1].getName() + "” 对话数：" + bList.size());
+		}
+
+		for (int i = 0; i < aList.size(); i++) {
+			wordsMapA.put(aList.get(i), bList.get(i));
+			wordsMapB.put(bList.get(i), aList.get(i));
+		}
+	}
+
 
 	public static void copyCell(XSSFCell rawCell, XSSFCell destCell) {
 		destCell.setCellType(rawCell.getCellTypeEnum());
@@ -204,40 +235,6 @@ public class LangTool {
 
 	}
 
-	// public static void main(String[] args) {
-	// try {
-	// final String WORDS_TABLE = args[0];
-	// final String TARGET_FILE_DIR = args[1];
-	//
-	// System.out.println("读取词库：" + WORDS_TABLE);
-	// System.out.println("目标文件或文件夹：" + TARGET_FILE_DIR);
-	// System.out.println("开始加载词库...");
-	// load(new File(WORDS_TABLE), false);
-	// System.out.println("加载词库完成");
-	// System.out.println("开始翻译目标文件...");
-	// File fileOrDir = new File(TARGET_FILE_DIR);
-	// if (fileOrDir.isFile()) {
-	// trans(fileOrDir);
-	// } else {
-	// for (File file : fileOrDir.listFiles()) {
-	// trans(file);
-	// }
-	// }
-	//
-	// } catch (Exception e) {
-	// System.err.println("【错误】发生错误，操作中断，错误信息：" + e.getMessage());
-	// e.printStackTrace();
-	// } finally {
-	// try {
-	// exe.shutdown();
-	// exe.awaitTermination(10, TimeUnit.MINUTES);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// System.out.println("执行结束，程序退出。");
-	// }
-	//
-	// }
 
 	// 从session读取词库翻译文件
 	@SuppressWarnings("unchecked")
@@ -263,6 +260,15 @@ public class LangTool {
 		}
 		session.setAttribute(LangConst.SESSION_KEY_WORDS, wordsCache);
 		session.setAttribute(LangConst.SESSION_KEY_WORDS_INDEX, wordsIndexCache);
+	}
+
+	// 初始化填充原文件入session
+	public static void loadFillSrc(File wordsDir, HttpSession session) throws Exception {
+		Map<String, String> aCache = new TreeMap<>();
+		Map<String, String> bCache = new TreeMap<>();
+		loadFillSrc(wordsDir.listFiles(), aCache, bCache);
+		session.setAttribute(LangConst.SESSION_KEY_FILLS_A, aCache);
+		session.setAttribute(LangConst.SESSION_KEY_FILLS_B, bCache);
 	}
 
 	public static String quote(String str) {
@@ -311,4 +317,18 @@ public class LangTool {
 		}
 		return TupleUtil.tuple(info, statsJson);
 	}
+
+	public static File fillFile(File file, HttpSession session) throws Exception {
+		if (!file.isFile()) {
+			return null;
+		}
+
+		ILangFileHandler langHandler = LangFileFactory.getHandler(file.getName());
+		if (langHandler == null) {
+			return null;
+		}
+		return langHandler.trans(file, (Map<String, String>) session.getAttribute(LangConst.SESSION_KEY_WORDS),
+				(List<String>) session.getAttribute(LangConst.SESSION_KEY_WORDS_INDEX));
+	}
+
 }

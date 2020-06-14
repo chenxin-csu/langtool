@@ -28,6 +28,16 @@ $(function() {
 		singleFileUploads : false,
 	});
 
-	$.post('fileUpload?type=clear')
+    $('#fileupload_fills1').fileupload({
+        url: 'fill?type=fill_src',
+        singleFileUploads: false,
+    });
+
+    $('#fileupload_fills2').fileupload({
+        url: 'fill?type=fill_dst',
+        singleFileUploads: false,
+    });
+
+    $.post('fileUpload?type=clear')
 
 });

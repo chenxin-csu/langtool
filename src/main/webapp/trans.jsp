@@ -134,7 +134,7 @@ div.container {
 					value="https://blueimp.github.io/jQuery-File-Upload/">
 			</noscript>
 			<!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-			<font>上传词库文件：</font>
+            <font>上传词库文件：</font>
 			<div class="row fileupload-buttonbar">
 				<div class="col-lg-7">
 					<!-- The fileinput-button span is used to style the file input field as button -->

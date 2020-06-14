@@ -18,15 +18,13 @@ import langtool.lang.ILangFileHandler;
 import langtool.util.FileUtil;
 
 /**
- * 
  * @author xin.chen
- *
  */
 public class TextHandler implements ILangFileHandler {
 
 	@Override
 	public File trans(File file, Map<String, String> words,
-			List<String> wordsIdx) throws Exception {
+					  List<String> wordsIdx) throws Exception {
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		String line = null;
@@ -56,7 +54,7 @@ public class TextHandler implements ILangFileHandler {
 	}
 
 	@Override
-	public StatsInfo stats(File file, Map<String,String> params)
+	public StatsInfo stats(File file, Map<String, String> params)
 			throws Exception {
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
@@ -73,4 +71,8 @@ public class TextHandler implements ILangFileHandler {
 		return info;
 	}
 
+	@Override
+	public File fill(File file, Map<String, String> wordsA, Map<String, String> wordsB) throws Exception {
+		return null;
+	}
 }

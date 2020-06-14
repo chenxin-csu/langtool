@@ -10,7 +10,7 @@ public interface ILangFileHandler {
 
 	/**
 	 * 文件翻译
-	 * 
+	 *
 	 * @param file
 	 * @param words
 	 * @param wordsIndex
@@ -21,10 +21,22 @@ public interface ILangFileHandler {
 
 	/**
 	 * 文件统计
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 * @throws Exception
 	 */
 	StatsInfo stats(File file, Map<String, String> params) throws Exception;
+
+	/**
+	 * 复制填充
+	 *
+	 * @param file
+	 * @param wordsA
+	 * @param wordsB
+	 * @return
+	 * @throws Exception
+	 */
+	File fill(File file, Map<String, String> wordsA, Map<String, String> wordsB) throws Exception;
+
 }

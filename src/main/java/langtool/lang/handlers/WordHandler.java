@@ -30,7 +30,7 @@ public class WordHandler implements ILangFileHandler {
 
 	// @Override
 	public File trans(File file, Map<String, String> words,
-			List<String> wordsIdx) throws Exception {
+					  List<String> wordsIdx) throws Exception {
 		FileUtil.checkDoneDir();
 		String docName = file.getAbsolutePath().replace(file.getName(), "");
 		docName += TMP_PATH + PATH_SPLITER + file.getName();
@@ -105,7 +105,7 @@ public class WordHandler implements ILangFileHandler {
 	}
 
 	private String tranText(String rawStr, Map<String, String> words,
-			List<String> wordsIdx) {
+							List<String> wordsIdx) {
 		String doneText = new String(rawStr);
 		for (String word : wordsIdx) {
 			System.out.println(doneText);
@@ -145,4 +145,8 @@ public class WordHandler implements ILangFileHandler {
 		return info;
 	}
 
+	@Override
+	public File fill(File file, Map<String, String> wordsA, Map<String, String> wordsB) throws Exception {
+		return null;
+	}
 }
