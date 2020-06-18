@@ -27,12 +27,12 @@ public class FilterLineExcel {
 	private static List<String> filter0;
 	private static List<String> filter1;
 	static {
-		filter0 = Arrays.asList("姓名", "名字", "阵营", "职业", "身高", "体重", "生日", "动物", "爱好", "性格", "自我介绍");
+		filter0 = Arrays.asList("姓名", "名字", "阵营", "职业", "身高", "体重", "生日", "动物", "爱好", "性格","角色经历", "自我介绍");
 		filter1 = Arrays.asList("名字", "阵营", "职业", "身高", "体重", "生日", "动物", "爱好", "角色经历", "自我介绍");
 	}
 
 	public static void main(String[] args) {
-		filterLines(new File("/Users/jackie/Desktop/角色图鉴（人设+立绘+性格+技能）.xlsx"));
+		filterLines(new File("/Users/jackie/Desktop/qy/角色图鉴（人设+立绘+性格+技能）.xlsx"));
 	}
 
 	public static void filterLines(File file) {
@@ -123,7 +123,7 @@ public class FilterLineExcel {
 						}
 					}
 				}
-				if (nRowIdx != 9) {
+				if (nRowIdx != 10) {
 					System.out.println("nRowIdx:" + nRowIdx);
 				}
 			}

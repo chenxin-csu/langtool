@@ -69,7 +69,7 @@ public class ReplaceExcel {
             wordsMap.put(fields[1], new Words(fields[1], fields[2], fields[3], fields[0]));
         }
 
-        filterLines(new File("/Users/jackie/Downloads/角色图鉴.xlsx"));
+        filterLines(new File("/Users/jackie/Desktop/qy/done/角色图鉴整理.xlsx"));
     }
 
     public static void filterLines(File file) {

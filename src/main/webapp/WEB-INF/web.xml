@@ -3,22 +3,22 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee     http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
-  <filter>
-    <filter-name>LangToolFilter</filter-name>
-    <filter-class>langtool.web.LangToolFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>LangToolFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  <servlet>
-    <servlet-name>fileUpload</servlet-name>
-    <servlet-class>langtool.web.UploadServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>fileUpload</servlet-name>
-    <url-pattern>fileUpload</url-pattern>
-  </servlet-mapping>
+    <filter>
+        <filter-name>LangToolFilter</filter-name>
+        <filter-class>langtool.web.LangToolFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LangToolFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <servlet>
+        <servlet-name>fileUpload</servlet-name>
+        <servlet-class>langtool.web.UploadServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>fileUpload</servlet-name>
+        <url-pattern>fileUpload</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>fill</servlet-name>
@@ -28,17 +28,24 @@
         <servlet-name>fill</servlet-name>
         <url-pattern>fill</url-pattern>
     </servlet-mapping>
-
     <servlet>
-    <servlet-name>op</servlet-name>
-    <servlet-class>langtool.web.OpServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>op</servlet-name>
-    <url-pattern>op</url-pattern>
-  </servlet-mapping>
+        <servlet-name>convert</servlet-name>
+        <servlet-class>langtool.web.ConvertServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>convert</servlet-name>
+        <url-pattern>convert</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>op</servlet-name>
+        <servlet-class>langtool.web.OpServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>op</servlet-name>
+        <url-pattern>op</url-pattern>
+    </servlet-mapping>
 
     <welcome-file-list>
-    <welcome-file>/index.jsp</welcome-file>
-  </welcome-file-list>
+        <welcome-file>/index.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>

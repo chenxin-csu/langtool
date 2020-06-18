@@ -11,6 +11,7 @@ public class LangConst {
 	public static final String FILLS = "fills";
 	public static final String FILLS_SRC = "src";
 	public static final String FILLS_DST = "dst";
+	public static final String CONVERT = "convert";
 	public static final String DONE_PATH = "done";
 
 	public static final String THREAD_LOCAL_KEY_WS = "workspace_path";

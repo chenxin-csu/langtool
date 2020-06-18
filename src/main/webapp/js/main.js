@@ -38,6 +38,11 @@ $(function() {
         singleFileUploads: false,
     });
 
+    $('#fileupload_convert').fileupload({
+        url : 'convert',
+        singleFileUploads : false,
+    });
+
     $.post('fileUpload?type=clear')
 
 });
