@@ -32,7 +32,7 @@ import static langtool.LangConst.*;
 /**
  * Servlet implementation class UploadServlet
  */
-@WebServlet("/UploadServlet")
+@WebServlet(name = "UploadServlet", urlPatterns = "/fileUpload")
 public class UploadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -98,7 +98,7 @@ public class UploadServlet extends HttpServlet {
 
 			ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
 			items = uploadHandler.parseRequest(request);
-			ret.put(TRANS_FILES, jsonArray);
+			ret.put("files", jsonArray);
 			JSONObject detail = null;
 			File saveDir = new File(savePath);
 			if (!saveDir.exists()) {

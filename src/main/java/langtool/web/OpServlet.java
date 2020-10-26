@@ -18,53 +18,53 @@ import static langtool.LangConst.*;
 /**
  * Servlet implementation class OpServlet
  */
-@WebServlet("/OpServlet")
+@WebServlet(name = "OpServlet", urlPatterns = "/op")
 public class OpServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public OpServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public OpServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
-	}
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     * response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doPost(request, response);
+    }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	}
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+     * response)
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    }
 
-	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String fileName = req.getParameter("file");
-		String filePath = req.getServletContext().getRealPath(PATH_SPLITER) + PATH_SPLITER + WORKSPACE_PATH + PATH_SPLITER
-				+ req.getSession(true).getId() + PATH_SPLITER + TRANS_WORDS + PATH_SPLITER + fileName;
-		(new File(filePath)).delete();
-		JSONObject ret = new JSONObject();
-		JSONArray jsonArray = new JSONArray();
-		JSONObject detail = new JSONObject();
-		jsonArray.put(detail);
-		try {
-			ret.put("files", jsonArray);
-			detail.put(fileName, true);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		PrintWriter writer = resp.getWriter();
-		writer.write(ret.toString());
-		writer.flush();
-		writer.close();
-	}
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String fileName = req.getParameter("file");
+        String filePath = req.getServletContext().getRealPath(PATH_SPLITER) + PATH_SPLITER + WORKSPACE_PATH + PATH_SPLITER
+                + req.getSession(true).getId() + PATH_SPLITER + TRANS_WORDS + PATH_SPLITER + fileName;
+        (new File(filePath)).delete();
+        JSONObject ret = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        JSONObject detail = new JSONObject();
+        jsonArray.put(detail);
+        try {
+            ret.put("files", jsonArray);
+            detail.put(fileName, true);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        PrintWriter writer = resp.getWriter();
+        writer.write(ret.toString());
+        writer.flush();
+        writer.close();
+    }
 
 }

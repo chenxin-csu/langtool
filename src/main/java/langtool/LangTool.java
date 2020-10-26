@@ -5,6 +5,7 @@ import langtool.lang.ILangFileHandler;
 import langtool.lang.LangFileFactory;
 import langtool.util.FileUtil;
 import langtool.util.StringUtil;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -340,7 +341,7 @@ public class LangTool {
             return null;
         }
 
-        FileUtil.checkDoneDir(CONVERT);
+        FileUtil.checkDoneDir("");
         String xlsName = file.getAbsolutePath().replace(file.getName(), "");
         xlsName += DONE_PATH + PATH_SPLITER + file.getName();
         xlsName = xlsName.substring(0, xlsName.indexOf(".d"));
@@ -378,14 +379,14 @@ public class LangTool {
                 para = iterator.next();
                 String paraLine = para.getParagraphText().trim();
 
-                if (dialogStart && (StringUtil.isEmpty(paraLine) || paraLine.startsWith("＠") ||
-                        paraLine.startsWith("//") || paraLine.startsWith("【场景") || paraLine.startsWith("◆第"))) {
+                if (dialogStart && (StringUtil.isEmpty(paraLine) || paraLine.startsWith("＠") || paraLine.startsWith("@") ||
+                        paraLine.startsWith("//") || paraLine.startsWith("【") || paraLine.startsWith("◆"))) {
                     writeCell(wb, row, dialogCs, 2, text);
                     text = "";
                     dialogStart = false;
                 }
 
-                if (paraLine.startsWith("＠")) {
+                if (paraLine.startsWith("＠") || paraLine.startsWith("@")) {
                     dialogStart = true;
                     row = sheet.createRow(rowIdx++);
                     row.setRowStyle(dialogCs);
@@ -395,11 +396,11 @@ public class LangTool {
                     row.setRowStyle(commentCs);
                     writeCell(wb, row, commentCs, 1, "//");
                     writeCell(wb, row, commentCs, 2, paraLine.substring(2));
-                } else if (paraLine.startsWith("【场景")) {
+                } else if (paraLine.startsWith("【")) {
                     row = sheet.createRow(rowIdx++);
                     row.setRowStyle(sceneCs);
                     writeCell(wb, row, sceneCs, 0, paraLine);
-                } else if (paraLine.startsWith("◆第")) {
+                } else if (paraLine.startsWith("◆")) {
                     row = sheet.createRow(rowIdx++);
                     row.setRowStyle(titleCs);
                     writeCell(wb, row, titleCs, 0, paraLine);
@@ -408,11 +409,11 @@ public class LangTool {
                 }
 
                 if (dialogStart) {
-                    if (!paraLine.startsWith("＠")) {
+                    if (!paraLine.startsWith("＠") && !paraLine.startsWith("@")) {
                         if (StringUtil.isEmpty(text)) {
                             text = paraLine;
                         } else {
-                            text += "\n" + paraLine;
+                            text += StringEscapeUtils.escapeJava("\n") + paraLine;
                         }
                     }
                 }

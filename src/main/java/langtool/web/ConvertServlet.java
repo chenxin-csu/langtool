@@ -24,7 +24,7 @@ import static langtool.LangConst.*;
 /**
  * Servlet implementation class UploadServlet
  */
-@WebServlet("/ConvertServlet")
+@WebServlet(name = "ConvertServlet", urlPatterns = "/convert")
 public class ConvertServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -61,7 +61,7 @@ public class ConvertServlet extends HttpServlet {
             String msg = null;
             ServletFileUpload uploadHandler = new ServletFileUpload(new DiskFileItemFactory());
             items = uploadHandler.parseRequest(request);
-            ret.put(CONVERT, jsonArray);
+            ret.put("files", jsonArray);
             JSONObject detail = null;
             File saveDir = new File(savePath);
             if (!saveDir.exists()) {
@@ -100,7 +100,7 @@ public class ConvertServlet extends HttpServlet {
             ret = new JSONObject();
             JSONArray error = new JSONArray();
             try {
-                ret.put(CONVERT, error);
+                ret.put("files", error);
                 for (FileItem item : items) {
                     JSONObject f = new JSONObject();
                     f.put("name", item.getName());

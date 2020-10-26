@@ -42,7 +42,7 @@
 }
 
 html, body {
-	background-image: url('./img/pkq.png');
+	background-image: url('./img/snoopy.png');
 	background-repeat: no-repeat; ! important;
 	background-position: bottom right;
 	/*background-color: #F6F6F6;*/
@@ -136,7 +136,7 @@ div.container {
 	</div>
 
 	<div class="container">
-		<font>上传文件：</font>
+		<font>上传剧情文件（Word）：</font>
 		<form id="fileupload_convert" method="POST"
 			enctype="multipart/form-data">
 			<!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
@@ -155,7 +155,6 @@ div.container {
 					</button>
 					<span class="fileupload-process"></span>
 				</div>
-				<span style="color: red; font-size: large;" id="totalWords"></span>
 				<div class="col-lg-5 fileupload-progress fade">
 					<!-- The global progress bar -->
 					<div class="progress progress-striped active" role="progressbar"
@@ -177,8 +176,6 @@ div.container {
 	</div>
 
 
-
-
 	<!-- The template to display files available for upload -->
 	<script id="template-upload" type="text/x-tmpl">
 {% for (var i=0, file; file=o.files[i]; i++) { %}
@@ -198,18 +195,20 @@ div.container {
             {% if (!i && !o.options.autoUpload) { %}
                 <button class="btn btn-primary start" disabled style='display:none'>
                     <i class="glyphicon glyphicon-upload"></i>
-                    <span>Start</span>
+                    <span>上传</span>
                 </button>
             {% } %}
             {% if (!i) { %}
                 <button class="btn btn-danger cancel" style='display:none'>
                     <i class="glyphicon glyphicon-ban-circle"></i>
-                    <span>Cancel</span>
+                    <span>取消</span>
                 </button>
             {% } %}
         </td>
     </tr>
 {% } %}
+
+
 </script>
 	<!-- The template to display files available for download -->
 	<script id="template-download" type="text/x-tmpl">
@@ -236,17 +235,7 @@ div.container {
 				{% if (file.deleteUrl) { %}
 					<div><span class="label label-success">上传成功</span></div>
 				{% }else{ %}
-					<div><span class="label label-success">统计完成</span><br><br>
-						{% if(file.stats.fileType == 1) { %}
-						{% for(var sub in file.stats.colDetail) { %}
-						<font color="green">工作表：{%=file.stats.colDetail[sub].sheetName%}</font><br>
-						{% for(var e in file.stats.colDetail[sub].sheetDetail) { %}
-							{%=file.stats.colDetail[sub].sheetDetail[e].colName %}：{%=file.stats.colDetail[sub].sheetDetail[e].cnt %}&nbsp;&nbsp;&nbsp;
-						{% } %}
-						<br><br>
-						{%}%}
-						{%}%}
-					</div>
+					<div><span class="label label-success">转换成功</span> 点击<span class="label label-success">下载文件</span>保存到本地</div>
 				{% } %}
 			{%}%}
         </td>
@@ -257,13 +246,20 @@ div.container {
             {% if (file.deleteUrl) { %}
                 <button class="btn btn-warning delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
                     <i class="glyphicon glyphicon-trash"></i>
-                    <span>Delete</span>
+                    <span>删除</span>
                 </button>
              <!--   <input type="checkbox" name="delete" value="1" class="toggle">-->
             {% } else { %}
-                <button class="btn btn-danger cancel" style='display:none'>
+				{% if (!file.error) { %}
+				<a class="download_btn" href="{%=file.url%}" download="{%=file.name%}">
+				<span class="btn btn-success download">
+					<i class="glyphicon glyphicon-download"></i>
+                    下载文件
+                </span></a>
+				{% } %}
+                <button class="btn btn-danger cancel">
                     <i class="glyphicon glyphicon-ban-circle"></i>
-                    <span>Cancel</span>
+                    <span>取消</span>
                 </button>
             {% } %}
         </td>
